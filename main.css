@@ -1,0 +1,70 @@
+
+@import url(http://fonts.googleapis.com/earlyaccess/notosanstc.css);
+html body {
+    width: 100%;
+    margin: 0;
+    background-color: #e5e5e5;
+    /* font-family: 'Noto Sans TC', sans-serif; */
+    text-align: center;
+}
+#banner {
+    z-index: 3;
+    position: 'fixed';
+    top: 0;
+    background: 'white';
+    width: '100%';
+}
+#textarea{
+    width: 100%;
+    height: 300px;
+}
+#editor {
+    box-shadow: 0 1px 3px 1px rgba(60, 60, 60, 0.13);
+    box-sizing: border-box;
+    margin: 200px auto;
+    max-width: 740px;
+    background-color: white;
+    padding: 56px 50px;
+    min-height: 700px;
+}
+* { box-sizing: border-box; }
+body {
+    font: 16px Arial;
+}
+#recommand {
+    overflow: auto;
+}
+.autocomplete {
+    /*the container must be positioned relative:*/
+    position: relative;
+    display: inline-block;
+}
+input {
+    border: 1px solid transparent;
+    background-color: #f1f1f1;
+    padding: 10px;
+    font-size: 16px;
+}
+input[type=text] {
+    background-color: #f1f1f1;
+    width: 100%;
+}
+.autocomplete-items {
+    position: absolute;
+    box-shadow: 0 2px 12px 0 rgba(30, 30, 30, 0.08);
+    z-index: 2;
+}
+.autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff;
+}
+.autocomplete-items div:hover {
+    /*when hovering an item:*/
+    background-color: #D3E1EB;
+    text-decoration: none;
+}
+.autocomplete-active {
+    /*when navigating through the items using the arrow keys:*/
+    background-color: #D3E1EB !important;
+}
