@@ -4,7 +4,7 @@ html body {
     width: 100%;
     margin: 0;
     background-color: #e5e5e5;
-    /* font-family: 'Noto Sans TC', sans-serif; */
+    font-family: 'Noto Sans TC', sans-serif;
     text-align: center;
 }
 #banner {
@@ -49,6 +49,19 @@ input[type=text] {
     background-color: #f1f1f1;
     width: 100%;
 }
+#autocomplete-list {
+    font-size: 0.8rem;
+    text-align: left;
+}
+#function-info {
+    position: absolute;
+    left: -80px;
+    width: 80px;
+    background: #5B4DFF;
+    color: white;
+    height: 30px;
+    text-align: center;
+}
 .autocomplete-items {
     position: absolute;
     box-shadow: 0 2px 12px 0 rgba(30, 30, 30, 0.08);
@@ -61,10 +74,10 @@ input[type=text] {
 }
 .autocomplete-items div:hover {
     /*when hovering an item:*/
-    background-color: #D3E1EB;
+    background-color: #E3E2F4;
     text-decoration: none;
 }
 .autocomplete-active {
     /*when navigating through the items using the arrow keys:*/
-    background-color: #D3E1EB !important;
+    background-color: #E3E2F4 !important;
 }

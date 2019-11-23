@@ -1,11 +1,22 @@
 var currentText = "";
 var currentStartIndex = 0;
 var currentEndIndex = 1;
-var words;
+var words = [];
 var myFocusOffset =  window.getSelection().focusOffset;
-var currentFunction;
+var currentFunctionIndex = 1;
 
 $(function() {
+    $(document).ready(function() {
+        var quill = new Quill('#editor', {
+            theme: 'snow'
+        });
+        // 載入儲存的文字
+        changeCSS();
+        loaddata();
+        words = ["勞動基準法第5條</br>雇主不得以強暴、脅迫、拘禁或其他非法之方法，強制勞工從事勞動。","勞動基準法第6條</br>任何人不得介入他人之勞動契約，抽取不法利益。","定期契約屆滿後，有左列情形之一者，視為不定期契約：<br />(一)勞工繼續工作而雇主不即表示反對意思者。<br />(二)雖經另訂新約，惟其前後勞動契約之工作期間超過九十日，前後契約間斷期間未超過三十日者。勞動基準法第9條第2項第1款","勞動契約，分為定期契約及不定期契約。臨時性、短期性、季節性及特定性工作得為定期契約；有繼續性工作應為不定期契約。派遣事業單位與派遣勞工訂定之勞動契約，應為不定期契約。<br />定期契約屆滿後，有左列情形之一者，視為不定期契約：<br />(一)勞工繼續工作而雇主不即表示反對意思者。<br />(二)雖經另訂新約，惟其前後勞動契約之工作期間超過九十日，前後契約間斷期間未超過三十日者。前項規定於特定性或季節性之定期工作不適用之。</br>勞動基準法第9條第1項","可允許使用之武力(正當防衛)", "可不可", "債主", "債務","債權受益人", "遺產管理人", "銀行帳戶", "前約因", "不成比例", "受拘束"];
+        autocomplete($('.ql-editor'), words);
+    });
+
     // 偵測 Ctrl+S 儲存檔案
     $(window).bind('keydown', function(event) {
         if (event.ctrlKey || event.metaKey) {
@@ -17,18 +28,24 @@ $(function() {
                     break;
                 // function 1
                 case 'y':
-                    words = f1();
+                    currentFuncionIndex = 1;
+                    console.log("f1");
                     break;
                 // function 2
                 case 'u':
-                    words = f2();
+                    currentFuncionIndex = 2;
+                    console.log("f2");
                     break;
                 // function 3
                 case 'i':
-                    words = f3();
+                    currentFuncionIndex = 3;
+                    console.log("f3");
                     break;
             }
         }
+    });
+    $('.ql-editor').bind("DOMSubtreeModified", function (e) {
+        words = getSuggestions(currentText);
     });
 });
 
@@ -66,21 +83,26 @@ function autocomplete(inp, arr) {
         // 移動斷詞的結尾到最後
         // TODO: 現在如果刪除字的話會錯
         currentEndIndex = inp.text().length;
+        console.log(currentStartIndex　+ "," + currentEndIndex);
         currentText =  inp.text().slice(currentStartIndex, currentEndIndex);
         arr = words;
         // TODO: val應該是從上次斷掉的地方開始
-        var a, b, i, val = currentText;
+        var b, i, val = currentText;
         // var a, b, i, val = currentText;
         console.log(val);
         /*close any already open lists of autocompleted values*/
         closeAllLists();
         if (!val) { return false;}
-        currentFocus = -1;
+        currentFocus = 0;
         /*create a DIV element that will contain the items (values):*/
+        // a = document.getElementById("autocomplete-list");
         a = document.createElement("DIV");
         a.setAttribute("id", this.id + "autocomplete-list");
         a.setAttribute("class", "autocomplete-items");
         document.body.appendChild(a);
+        f = document.createElement("DIV");
+        f.setAttribute("id", "function-info");
+        a.appendChild(f);
         // this.parentNode.appendChild(a);
         /*for each item in the array...*/
         for (i = 0; i < arr.length; i++) {
@@ -97,6 +119,7 @@ function autocomplete(inp, arr) {
             b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
             /*execute a function when someone clicks on the item value (DIV element):*/
             b.addEventListener("click", function(e) {
+                // TODO: 修正插入位置
                 insertTextAtCursor(this.getElementsByTagName("input")[0].value.substr(val.length));
                 closeAllLists();
                 // 把斷詞起始位置移到最後
@@ -114,6 +137,7 @@ function autocomplete(inp, arr) {
                 left: pos.x + 10,
                 top: pos.y + 10
             });
+            changeFunctionName();
         }
     });
     // 偵測鍵盤輸入 看是選擇列表上哪個字詞
@@ -160,13 +184,12 @@ function autocomplete(inp, arr) {
         x[i].classList.remove("autocomplete-active");
       }
     }
+    // TODO: 保留no suggestion
     function closeAllLists(elmnt) {
-      /*close all autocomplete lists in the document,
-      except the one passed as an argument:*/
       var x = document.getElementsByClassName("autocomplete-items");
       for (var i = 0; i < x.length; i++) {
         if (elmnt != x[i] && elmnt != inp) {
-          x[i].parentNode.removeChild(x[i]);
+            x[i].parentNode.removeChild(x[i]);
         }
       }
     }
@@ -176,16 +199,33 @@ function autocomplete(inp, arr) {
     });
 }
 
-function f1(){
+function getSuggestions(currentText){
+    switch(currentFuncionIndex){
+        case 1:
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+    }
     return words;
 }
 
-function f2(){
-    return words;
-}
-
-function f3(){
-    return words;
+// TODO: 不會正確更改字串
+function changeFunctionName(){
+    var name;
+    switch(currentFunctionIndex){
+        case 1:
+            name = "名詞補完";
+            break;
+        case 2:
+            name = "條文補完";
+            break;
+        case 3:
+            name = "判決函釋";
+            break;
+    }
+    document.getElementById("function-info").innerHTML = name;
 }
 
     // 在游標之後插入文字
@@ -193,9 +233,9 @@ function f3(){
         var sel, range;
         if (window.getSelection) {
             sel = window.getSelection();
-            window.getSelection().focusNode.nodeValue = text;
-            window.getSelection().focusNode.innerHTML = text;
-            console.log(window.getSelection().focusNode.nodeValue);
+            // window.getSelection().focusNode.nodeValue = text;
+            // window.getSelection().focusNode.innerHTML = text;
+            // console.log(window.getSelection().focusNode.nodeValue);
             // window.getSelection().focusNode.insertNode( document.createTextNode(text));
             if (sel.getRangeAt && sel.rangeCount) {
                 range = sel.getRangeAt(0);
@@ -243,15 +283,4 @@ function changeCSS() {
         background: 'white'
     });
 }
-
-$(document).ready(function() {
-    var quill = new Quill('#editor', {
-        theme: 'snow'
-    });
-    // 載入儲存的文字
-    changeCSS();
-    loaddata();
-    words = ["勞動基準法第5條</br>雇主不得以強暴、脅迫、拘禁或其他非法之方法，強制勞工從事勞動。","勞動基準法第6條</br>任何人不得介入他人之勞動契約，抽取不法利益。","定期契約屆滿後，有左列情形之一者，視為不定期契約：<br />(一)勞工繼續工作而雇主不即表示反對意思者。<br />(二)雖經另訂新約，惟其前後勞動契約之工作期間超過九十日，前後契約間斷期間未超過三十日者。勞動基準法第9條第2項第1款","勞動契約，分為定期契約及不定期契約。臨時性、短期性、季節性及特定性工作得為定期契約；有繼續性工作應為不定期契約。派遣事業單位與派遣勞工訂定之勞動契約，應為不定期契約。<br />定期契約屆滿後，有左列情形之一者，視為不定期契約：<br />(一)勞工繼續工作而雇主不即表示反對意思者。<br />(二)雖經另訂新約，惟其前後勞動契約之工作期間超過九十日，前後契約間斷期間未超過三十日者。前項規定於特定性或季節性之定期工作不適用之。</br>勞動基準法第9條第1項","可允許使用之武力(正當防衛)", "可不可", "債主", "債務","債權受益人", "遺產管理人", "銀行帳戶", "前約因", "不成比例", "受拘束"];
-    autocomplete($('.ql-editor'), words);
-});
 
