@@ -8,7 +8,7 @@ html body {
     text-align: center;
 }
 #banner {
-    z-index: 3;
+    z-index: 99;
     position: 'fixed';
     top: 0;
     background: 'white';
@@ -50,8 +50,10 @@ input[type=text] {
     width: 100%;
 }
 #autocomplete-list {
-    font-size: 0.8rem;
-    text-align: left;
+    z-index: 2;
+}
+#autocomplete-list-2 {
+    z-index: 3;
 }
 #function-info {
     position: absolute;
@@ -65,7 +67,8 @@ input[type=text] {
 .autocomplete-items {
     position: absolute;
     box-shadow: 0 2px 12px 0 rgba(30, 30, 30, 0.08);
-    z-index: 2;
+    font-size: 0.8rem;
+    text-align: left;
 }
 .autocomplete-items div {
     padding: 10px;

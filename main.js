@@ -27,19 +27,19 @@ $(function() {
                     savedata();
                     break;
                 // function 1
-                case 'y':
-                    currentFuncionIndex = 1;
-                    console.log("f1");
+                case 'y':    
+                    currentFunctionIndex = 1;
+                    showFunctionName();
                     break;
                 // function 2
                 case 'u':
-                    currentFuncionIndex = 2;
-                    console.log("f2");
+                    currentFunctionIndex = 2;
+                    showFunctionName();
                     break;
                 // function 3
                 case 'i':
-                    currentFuncionIndex = 3;
-                    console.log("f3");
+                    currentFunctionIndex = 3;
+                    showFunctionName();
                     break;
             }
         }
@@ -83,13 +83,13 @@ function autocomplete(inp, arr) {
         // 移動斷詞的結尾到最後
         // TODO: 現在如果刪除字的話會錯
         currentEndIndex = inp.text().length;
-        console.log(currentStartIndex　+ "," + currentEndIndex);
+        // console.log(currentStartIndex　+ "," + currentEndIndex);
         currentText =  inp.text().slice(currentStartIndex, currentEndIndex);
         arr = words;
         // TODO: val應該是從上次斷掉的地方開始
-        var b, i, val = currentText;
+        var a, b, i, val = currentText;
         // var a, b, i, val = currentText;
-        console.log(val);
+        // console.log(val);
         /*close any already open lists of autocompleted values*/
         closeAllLists();
         if (!val) { return false;}
@@ -137,8 +137,8 @@ function autocomplete(inp, arr) {
                 left: pos.x + 10,
                 top: pos.y + 10
             });
-            changeFunctionName();
         }
+        showFunctionName();
     });
     // 偵測鍵盤輸入 看是選擇列表上哪個字詞
     inp.bind('keydown', function(e) {
@@ -160,7 +160,6 @@ function autocomplete(inp, arr) {
         } else if (e.keyCode == 13) {
         /*If the ENTER key is pressed, prevent the form from being submitted,*/
             e.preventDefault();
-            console.log(currentFocus);
             if (currentFocus > -1) {
                 /*and simulate a click on the "active" item:*/
                 if (x) x[currentFocus].click();
@@ -186,17 +185,37 @@ function autocomplete(inp, arr) {
     }
     // TODO: 保留no suggestion
     function closeAllLists(elmnt) {
-      var x = document.getElementsByClassName("autocomplete-items");
-      for (var i = 0; i < x.length; i++) {
-        if (elmnt != x[i] && elmnt != inp) {
-            x[i].parentNode.removeChild(x[i]);
+        console.log("closeAllList");
+        var x = document.getElementsByClassName("autocomplete-items");
+        for (var i = 0; i < x.length; i++) {
+            if (elmnt != x[i] && elmnt != inp) {
+                x[i].parentNode.removeChild(x[i]);
+            }        
         }
-      }
     }
     /*execute a function when someone clicks in the document:*/
     document.addEventListener("click", function (e) {
         closeAllLists(e.target);
     });
+}
+function showFunctionName(){
+    var listNode, pos;
+    if( $('#autocomplete-list').length < 1){
+        listNode = document.createElement("DIV");
+        listNode.setAttribute("id", "autocomplete-list");
+        listNode.setAttribute("class", "autocomplete-items");
+        document.body.appendChild(listNode);
+        var f = document.createElement("DIV");
+        f.setAttribute("id", "function-info");
+        listNode.appendChild(f);
+    }
+    listNode = $('#autocomplete-list'); 
+    pos = getCaretPosition();
+    listNode.css({
+        left: pos.x + 10,
+        top: pos.y + 10
+    });
+    changeFunctionName();
 }
 
 function getSuggestions(currentText){
@@ -226,6 +245,7 @@ function changeFunctionName(){
             break;
     }
     document.getElementById("function-info").innerHTML = name;
+    console.log(name);
 }
 
     // 在游標之後插入文字
