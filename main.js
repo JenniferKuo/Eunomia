@@ -1,19 +1,30 @@
 var currentText = "";
 var currentStartIndex = 0;
 var currentEndIndex = 1;
-var words = [];
+var words, words2 = [];
 var myFocusOffset =  window.getSelection().focusOffset;
 var currentFunctionIndex = 1;
+var API1 = "";
+var API2 = "";
+var API3 = "";
 
 $(function() {
     $(document).ready(function() {
         var quill = new Quill('#editor', {
             theme: 'snow'
-        });
+          });
         // 載入儲存的文字
         changeCSS();
+        // disable all quill hotkeys
+        // TODO: 取消所有hotkey
+        var keyboard = quill.keyboard;
+        for (var key in keyboard.hotkeys) {
+            delete keyboard.hotkeys[key];
+        }
+        // // TODO: 會出現錯誤
         loaddata();
-        words = ["勞動基準法第5條</br>雇主不得以強暴、脅迫、拘禁或其他非法之方法，強制勞工從事勞動。","勞動基準法第6條</br>任何人不得介入他人之勞動契約，抽取不法利益。","定期契約屆滿後，有左列情形之一者，視為不定期契約：<br />(一)勞工繼續工作而雇主不即表示反對意思者。<br />(二)雖經另訂新約，惟其前後勞動契約之工作期間超過九十日，前後契約間斷期間未超過三十日者。勞動基準法第9條第2項第1款","勞動契約，分為定期契約及不定期契約。臨時性、短期性、季節性及特定性工作得為定期契約；有繼續性工作應為不定期契約。派遣事業單位與派遣勞工訂定之勞動契約，應為不定期契約。<br />定期契約屆滿後，有左列情形之一者，視為不定期契約：<br />(一)勞工繼續工作而雇主不即表示反對意思者。<br />(二)雖經另訂新約，惟其前後勞動契約之工作期間超過九十日，前後契約間斷期間未超過三十日者。前項規定於特定性或季節性之定期工作不適用之。</br>勞動基準法第9條第1項","可允許使用之武力(正當防衛)", "可不可", "債主", "債務","債權受益人", "遺產管理人", "銀行帳戶", "前約因", "不成比例", "受拘束"];
+        words = ["勞動基準法第5條","勞動基準法第6條"];
+        words2 = ["雇主不得以強暴、脅迫、拘禁或其他非法之方法，強制勞工從事勞動。","任何人不得介入他人之勞動契約，抽取不法利益。"];
         autocomplete($('.ql-editor'), words);
     });
 
@@ -50,9 +61,10 @@ $(function() {
 });
 
 function loaddata(){
-    if(window.localStorage["data"]){
-        document.getElementsByClassName("ql-editor")[0].innerHTML = window.localStorage.getItem("data");
-    }
+    // if(window.localStorage["data"]){
+    //     document.getElementsByClassName("ql-editor")[0].innerHTML = window.localStorage.getItem("data");
+    // }
+    document.getElementsByClassName("ql-editor")[0].innerHTML = "";
 }
 function savedata(){
     var inputText = document.getElementsByClassName("ql-editor")[0].innerHTML;
@@ -75,9 +87,23 @@ function getTextPosition() {
     }
 }
 
+function parseJSON(jsonText){ 
+    words = JSON.parse(jsonText);
+}
+
 function autocomplete(inp, arr) {
     // arr 是建議字詞列表
     var currentFocus;
+    function setupList(){
+        switch(currentFunctionIndex){
+            case 1: 
+                break;
+            case 2: 
+                break;
+            case 3: 
+                break;
+        }
+    }
     // 建立一個包含所有建議字詞的list
     inp.bind("DOMSubtreeModified", function (e) {
         // 移動斷詞的結尾到最後
@@ -87,7 +113,7 @@ function autocomplete(inp, arr) {
         currentText =  inp.text().slice(currentStartIndex, currentEndIndex);
         arr = words;
         // TODO: val應該是從上次斷掉的地方開始
-        var a, b, i, val = currentText;
+        var a, b, c, d, i, val = currentText;
         // var a, b, i, val = currentText;
         // console.log(val);
         /*close any already open lists of autocompleted values*/
@@ -103,8 +129,7 @@ function autocomplete(inp, arr) {
         f = document.createElement("DIV");
         f.setAttribute("id", "function-info");
         a.appendChild(f);
-        // this.parentNode.appendChild(a);
-        /*for each item in the array...*/
+
         for (i = 0; i < arr.length; i++) {
           /*check if the item starts with the same letters as the text field value:*/
           // TODO: 斷詞處理
@@ -143,21 +168,25 @@ function autocomplete(inp, arr) {
     // 偵測鍵盤輸入 看是選擇列表上哪個字詞
     inp.bind('keydown', function(e) {
         var x = document.getElementById(this.id + "autocomplete-list");
-        if (x) x = x.getElementsByTagName("div");
-        
-        if (e.keyCode == 40) {
-        /*If the arrow DOWN key is pressed,
-        increase the currentFocus variable:*/
-        currentFocus++;
-        /*and and make the current item more visible:*/
-        addActive(x);
+        if(x) x = x.childNodes;
+        // if (x) x = x.getElementsByTagName("div");
+        // var x = document.getElementsByClassName("autocomplete-items");
+        console.log(x.length);
+        if (e.keyCode == 40) { // down
+            currentFocus++;
+            addActive(x);
         } else if (e.keyCode == 38) { //up
-        /*If the arrow UP key is pressed,
-        decrease the currentFocus variable:*/
-        currentFocus--;
-        /*and and make the current item more visible:*/
-        addActive(x);
-        } else if (e.keyCode == 13) {
+            currentFocus--;
+            addActive(x);
+        } else if(e.keyCode == 39){ // right
+            if ($('#autocomplete-list-2').length){
+
+            }
+        } else if(e.keyCode == 37){ // left
+            if ($('#autocomplete-list-2').length){
+
+            }
+        } else if (e.keyCode == 13) { // enter
         /*If the ENTER key is pressed, prevent the form from being submitted,*/
             e.preventDefault();
             if (currentFocus > -1) {
@@ -176,6 +205,27 @@ function autocomplete(inp, arr) {
       if (currentFocus < 0) currentFocus = (x.length - 1);
       /*add class "autocomplete-active":*/
       x[currentFocus].classList.add("autocomplete-active");
+        // 如果list有兩層，並且目前第二層list不存在
+        if(words2.length > 0 && $('#autocomplete-list-2').length < 1){
+            c = document.createElement("DIV");
+            c.setAttribute("id", "autocomplete-list-2");
+            c.setAttribute("class", "autocomplete-items");
+            for (i = 0; i < words2.length; i++) {
+                  d = document.createElement("DIV");
+                  d.innerHTML += words2[i];
+                  d.innerHTML += "<input type='hidden' value='" + words2[i] + "'>";
+                  d.addEventListener("click", function(e) {
+                      // TODO: 修正插入位置
+                      insertTextAtCursor(this.getElementsByTagName("input")[0].value);
+                      closeAllLists();
+                      // 把斷詞起始位置移到最後
+                      currentStartIndex = inp.text().length;
+                  });
+                  c.appendChild(d);
+                
+              }
+            x[currentFocus].appendChild(c);
+        }
     }
     function removeActive(x) {
       /*a function to remove the "active" class from all autocomplete items:*/
@@ -230,7 +280,6 @@ function getSuggestions(currentText){
     return words;
 }
 
-// TODO: 不會正確更改字串
 function changeFunctionName(){
     var name;
     switch(currentFunctionIndex){

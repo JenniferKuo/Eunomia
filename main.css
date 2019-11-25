@@ -54,6 +54,11 @@ input[type=text] {
 }
 #autocomplete-list-2 {
     z-index: 3;
+    position: absolute;
+    min-width: 200px;
+    left: 100%;
+    top: 0;
+    padding: 0;
 }
 #function-info {
     position: absolute;
