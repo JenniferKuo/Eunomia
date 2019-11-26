@@ -109,17 +109,20 @@ $(function() {
                     savedata();
                     break;
                 // function 1
-                case 'y':    
+                case 'j':    
+                    event.preventDefault();
                     currentFunctionIndex = 1;
                     showFunctionName();
                     break;
                 // function 2
-                case 'u':
+                case 'k':
+                    event.preventDefault();
                     currentFunctionIndex = 2;
                     showFunctionName();
                     break;
                 // function 3
-                case 'i':
+                case 'l':
+                    event.preventDefault();
                     currentFunctionIndex = 3;
                     showFunctionName();
                     break;
