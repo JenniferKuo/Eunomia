@@ -329,18 +329,51 @@ function autocomplete(inp, arr) {
         } else if (e.keyCode == 13) { // enter
         // TODO: 修好enter
             if (Object.keys(words).length > 0){
-                document.execCommand('insertHTML',false,'<br>');
                 e.preventDefault();
+                backspace();
+                // 防止enter換行
+                // document.getElementsByClassName('ql-editor')[0].contentEditable = false;
                 if (currentFocus > -1 && $('#autocomplete-list')) {
-                    /*and simulate a click on the "active" item:*/
                     if (x) x[currentFocus].click();
                 }
-                document.execCommand('insertHTML',true,'<br>');
             }
         }
         console.log("currentFocus: "+currentFocus, ", focus2:" + currentFocus2 + ", isHovered:" + isHovered);
     });
 
+    function backspace(){
+        var el = $('.ql-editor')[0],
+            myval   = 1,
+            cur_pos = 0;
+        
+        if (el.selectionStart) { 
+            cur_pos = el.selectionStart; 
+            
+        } else if (document.selection) { 
+            el.focus(); 
+            var r = document.selection.createRange(); 
+            if (r != null) {
+                var re = el.createTextRange(), 
+                    rc = re.duplicate(); 
+                re.moveToBookmark(r.getBookmark()); 
+                rc.setEndPoint('EndToStart', re); 
+            
+                cur_pos = rc.text.length; 
+            }
+        }  
+        console.log("cur_pos: " + cur_pos);
+        if (el.setSelectionRange) {
+            el.focus();
+            el.setSelectionRange(cur_pos - myval, cur_pos - myval);
+        }
+        else if (el.createTextRange) {
+            var range = el.createTextRange();
+            range.collapse(true);
+            range.moveEnd('character', cur_pos - myval);
+            range.moveStart('character', cur_pos - myval);
+            range.select();
+        }
+    }
     function addActive(x) {
       /*a function to classify an item as "active":*/
         if (!x) return false;

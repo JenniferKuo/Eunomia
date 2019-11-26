@@ -176,9 +176,10 @@ input[type=text] {
       left: 20;
   }
   #inp{
-      width: 200px;
+      max-width: 400px;
       font-family: 'Noto Sans TC', sans-serif;
       font-size: 18px;
       background-color: white;
       text-align: center; 
+      outline: none;
   }
