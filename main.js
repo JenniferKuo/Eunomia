@@ -85,17 +85,19 @@ $(function() {
         loaddata();
         // autocomplete($('.ql-editor'), words);
         $('.ql-editor').bind("DOMSubtreeModified", function (e) {
-            currentEndIndex = $('.ql-editor').text().length;
-            console.log(currentStartIndex　+ "," + currentEndIndex);
-            // currentText =  inp.text().slice(currentStartIndex, currentEndIndex);
-            if(window.getSelection().rangeCount > 0)
-                currentText = window.getSelection().focusNode.nodeValue;
-            else{
-                currentText = "";
+            if(document.getElementById('switch').checked){
+                currentEndIndex = $('.ql-editor').text().length;
+                console.log(currentStartIndex　+ "," + currentEndIndex);
+                // currentText =  inp.text().slice(currentStartIndex, currentEndIndex);
+                if(window.getSelection().rangeCount > 0)
+                    currentText = window.getSelection().focusNode.nodeValue;
+                else{
+                    currentText = "";
+                }
+                console.log("currentText:" + currentText);
+                if(currentText != null)
+                    getSuggestions(currentText);
             }
-            console.log("currentText:" + currentText);
-            if(currentText != null)
-                getSuggestions(currentText);
         });
     });
 
@@ -325,11 +327,13 @@ function autocomplete(inp, arr) {
             }
         } else if (e.keyCode == 13) { // enter
         // TODO: 修好enter
+            document.execCommand('insertHTML',false,'<br>');
             e.preventDefault();
             if (currentFocus > -1 && $('#autocomplete-list')) {
                 /*and simulate a click on the "active" item:*/
                 if (x) x[currentFocus].click();
             }
+            document.execCommand('insertHTML',true,'<br>');
         }
         console.log("currentFocus:"+currentFocus, "focus2:" + currentFocus2 + "isHovered:" + isHovered);
     });
@@ -413,23 +417,26 @@ function autocomplete(inp, arr) {
     });
 }
 function showFunctionName(){
-    var listNode, pos;
-    if( $('#autocomplete-list').length < 1){
-        listNode = document.createElement("DIV");
-        listNode.setAttribute("id", "autocomplete-list");
-        listNode.setAttribute("class", "autocomplete-items");
-        document.body.appendChild(listNode);
-        var f = document.createElement("DIV");
-        f.setAttribute("id", "function-info");
-        listNode.appendChild(f);
+    // 如果打開autocomplete開關
+    if(document.getElementById('switch').checked){
+        var listNode, pos;
+        if( $('#autocomplete-list').length < 1){
+            listNode = document.createElement("DIV");
+            listNode.setAttribute("id", "autocomplete-list");
+            listNode.setAttribute("class", "autocomplete-items");
+            document.body.appendChild(listNode);
+            var f = document.createElement("DIV");
+            f.setAttribute("id", "function-info");
+            listNode.appendChild(f);
+        }
+        listNode = $('#autocomplete-list'); 
+        pos = getCaretPosition();
+        listNode.css({
+            left: pos.x + 10,
+            top: pos.y + 20
+        });
+        changeFunctionName();
     }
-    listNode = $('#autocomplete-list'); 
-    pos = getCaretPosition();
-    listNode.css({
-        left: pos.x + 10,
-        top: pos.y + 20
-    });
-    changeFunctionName();
 }
 
 function getSuggestions(currentText){
