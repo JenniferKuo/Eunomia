@@ -1,6 +1,7 @@
 var API1 = "http://35.206.230.3:47000/autocomplete/api/v1/term";
 var API2 = "http://35.206.230.3:47000/autocomplete/api/v1/law";
 var API3 = "http://35.206.230.3:47000/autocomplete/api/v1/opinion";
+var textLength = 0;
 var currentText = "";
 var currentStartIndex = 0;
 var currentEndIndex = 1;
@@ -81,19 +82,16 @@ $(function() {
         });
         
         changeCSS();
-        // TODO: 取消所有hotkey
-        // var keyboard = quill.keyboard;
-        // for (var key in keyboard.hotkeys) {
-        //     delete keyboard.hotkeys[key];
-        // }
         // 載入儲存的文字
-        // TODO: 會出現錯誤
         loaddata();
         // autocomplete($('.ql-editor'), words);
         $('.ql-editor').bind("DOMSubtreeModified", function (e) {
-            if(document.getElementById('switch').checked){
+
+            if(textLength != $('.ql-editor').text().length && document.getElementById('switch').checked){
+                console.log("I'm fired");
                 currentEndIndex = $('.ql-editor').text().length;
                 console.log(currentStartIndex　+ "," + currentEndIndex);
+                showLoading();
                 // currentText =  inp.text().slice(currentStartIndex, currentEndIndex);
                 if(window.getSelection().rangeCount > 0)
                     currentText = window.getSelection().focusNode.nodeValue;
@@ -103,6 +101,7 @@ $(function() {
                 console.log("currentText:" + currentText);
                 if(currentText != null)
                     getSuggestions(currentText);
+                textLength = $('.ql-editor').text().length
             }
         });
     });
@@ -197,33 +196,41 @@ function sendRequest(apiUrl, keyword){
     });
 }
 
+function showLoading(){
+    $('#autocomplete-list').remove();
+    a = document.createElement("DIV");
+    a.setAttribute("id", "autocomplete-list");
+    a.setAttribute("class", "autocomplete-items");
+    document.body.appendChild(a);
+    f = document.createElement("DIV");
+    f.setAttribute("id", "function-info");
+    a.appendChild(f);
+    changeFunctionName();
+    b = document.createElement("DIV");
+    b.setAttribute("class", "autocomplete-items-child");
+    b.innerHTML = "<img src='ellipsis.gif' width='20px'>";
+    a.appendChild(b);
+}
+
 function autocomplete(inp, arr) {
     var currentFocus, currentFocus2;
     // 建立一個包含所有建議字詞的list
     // inp.bind("DOMSubtreeModified", function (e) {
         // 移動斷詞的結尾到最後
-        // TODO: 現在如果刪除字的話會錯
+        // TODO: 從有空白格的開始算新的詞
         
-        // TODO: val應該是從上次斷掉的地方開始
         // 目前輸入的字詞
         var a, b, c, d, i, val = currentText;
         /*close any already open lists of autocompleted values*/
-        closeAllLists();
+        // closeAllLists();
         if (!val) { return false;}
         currentFocus = -1;
         currentFocus2 = -1;
-        a = document.createElement("DIV");
-        a.setAttribute("id", "autocomplete-list");
-        a.setAttribute("class", "autocomplete-items");
-        document.body.appendChild(a);
-        f = document.createElement("DIV");
-        f.setAttribute("id", "function-info");
-        a.appendChild(f);
-
+        a = $('#autocomplete-list');
+        $('.autocomplete-items-child').remove();
         console.log("words:" + words);
         // 如果回傳回來的詞不為空
         if(Object.keys(words).length > 0){
-            // TODO: 根據function設定不同的arr
             if(currentFunctionIndex == 1){
                 arr = words['terms'];
             }else if(currentFunctionIndex == 2){
@@ -233,11 +240,7 @@ function autocomplete(inp, arr) {
             }        
 
             console.log("arr:" + arr);
-            
             for (i = 0; i < arr.length; i++) {
-                // TODO: 斷詞處理
-                // val的值為斷詞
-                // TODO: 根據function改變arr的值
                 var item;
                 if(currentFunctionIndex == 1){
                     item = arr[i];
@@ -270,14 +273,16 @@ function autocomplete(inp, arr) {
                       // 把斷詞起始位置移到最後
                       currentStartIndex = inp.text().length;
                   });
-                  a.appendChild(b);
+                  a.append(b);
                 }
             }
         }else{
             // 等待推薦回傳，words為空
+            // TODO: 沒有結果顯示出來 等待中再用圖片表示
             b = document.createElement("DIV");
-            b.innerHTML = "<img src='ellipsis.gif' width='20px'>";
-            a.appendChild(b);
+            b.innerHTML = "沒有建議的字詞";
+            b.setAttribute("class", "autocomplete-items-child");
+            a.append(b);
         }
         
 
@@ -333,13 +338,15 @@ function autocomplete(inp, arr) {
             }
         } else if (e.keyCode == 13) { // enter
         // TODO: 修好enter
-            document.execCommand('insertHTML',false,'<br>');
-            e.preventDefault();
-            if (currentFocus > -1 && $('#autocomplete-list')) {
-                /*and simulate a click on the "active" item:*/
-                if (x) x[currentFocus].click();
+            if (Object.keys(words).length > 0){
+                document.execCommand('insertHTML',false,'<br>');
+                e.preventDefault();
+                if (currentFocus > -1 && $('#autocomplete-list')) {
+                    /*and simulate a click on the "active" item:*/
+                    if (x) x[currentFocus].click();
+                }
+                document.execCommand('insertHTML',true,'<br>');
             }
-            document.execCommand('insertHTML',true,'<br>');
         }
         console.log("currentFocus:"+currentFocus, "focus2:" + currentFocus2 + "isHovered:" + isHovered);
     });
@@ -426,16 +433,19 @@ function showFunctionName(){
     // 如果打開autocomplete開關
     if(document.getElementById('switch').checked){
         var listNode, pos;
-        if( $('#autocomplete-list').length < 1){
+        if(!$('#autocomplete-list')){
+            console.log("create function info");
             listNode = document.createElement("DIV");
             listNode.setAttribute("id", "autocomplete-list");
             listNode.setAttribute("class", "autocomplete-items");
             document.body.appendChild(listNode);
-            var f = document.createElement("DIV");
-            f.setAttribute("id", "function-info");
-            listNode.appendChild(f);
         }
         listNode = $('#autocomplete-list'); 
+        if(!$('#function-info')){
+            var f = document.createElement("DIV");
+            f.setAttribute("id", "function-info");
+            listNode.append(f);
+        }
         pos = getCaretPosition();
         listNode.css({
             left: pos.x + 10,
@@ -446,7 +456,6 @@ function showFunctionName(){
 }
 
 function getSuggestions(currentText){
-    // TODO: implement
     var api, result;
     switch(currentFunctionIndex){
         case 1:
@@ -479,7 +488,9 @@ function changeFunctionName(){
             name = "判決函釋";
             break;
     }
-    document.getElementById("function-info").innerHTML = name;
+    if($('#function-info')){
+        $('#function-info').html(name);
+    }
 }
 
     // 在游標之後插入文字
