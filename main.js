@@ -3,8 +3,6 @@ var API2 = "http://35.206.230.3:47000/autocomplete/api/v1/law";
 var API3 = "http://35.206.230.3:47000/autocomplete/api/v1/opinion";
 var textLength = 0;
 var currentText = "";
-var currentStartIndex = 0;
-var currentEndIndex = 1;
 var words = [];
 var jsonObject = [];
 var json1 = {
@@ -89,20 +87,15 @@ $(function() {
         $('.ql-editor').bind("DOMSubtreeModified", function (e) {
 
             if(textLength != $('.ql-editor').text().length && document.getElementById('switch').checked){
-                console.log("I'm fired");
-                currentEndIndex = $('.ql-editor').text().length;
-                console.log(currentStartIndex　+ "," + currentEndIndex);
                 showLoading();
-                // currentText =  inp.text().slice(currentStartIndex, currentEndIndex);
-                if(window.getSelection().rangeCount > 0)
-                    currentText = window.getSelection().focusNode.nodeValue;
-                else{
-                    currentText = "";
+                if(window.getSelection().focusNode.nodeValue !=null){
+                    var textList = window.getSelection().focusNode.nodeValue.split(" ");
+                    currentText = textList[textList.length - 1];
+                    if (currentText != "")
+                        getSuggestions(currentText);
                 }
                 console.log("currentText:" + currentText);
-                if(currentText != null)
-                    getSuggestions(currentText);
-                textLength = $('.ql-editor').text().length
+                textLength = $('.ql-editor').text().length;
             }
         });
     });
@@ -268,11 +261,7 @@ function autocomplete(inp, arr) {
                           // 如果是function2, 點擊後插入description內容
                           insertTextAtCursor(arr[index]['name'].substr(val.length) + "：" + arr[index]['description']);
                       }
-                      // 選擇後把建議字詞清空
-                    //   words = [];
                       closeAllLists();
-                      // 把斷詞起始位置移到最後
-                      currentStartIndex = inp.text().length;
                   });
                   a.append(b);
                 }
@@ -349,7 +338,7 @@ function autocomplete(inp, arr) {
                 document.execCommand('insertHTML',true,'<br>');
             }
         }
-        console.log("currentFocus:"+currentFocus, "focus2:" + currentFocus2 + "isHovered:" + isHovered);
+        console.log("currentFocus: "+currentFocus, ", focus2:" + currentFocus2 + ", isHovered:" + isHovered);
     });
 
     function addActive(x) {
@@ -387,9 +376,6 @@ function autocomplete(inp, arr) {
                     d.addEventListener("click", function(e) {
                         insertTextAtCursor(this.getElementsByTagName("input")[0].value);
                         closeAllLists();
-                        // words = [];
-                        // 把斷詞起始位置移到最後
-                        currentStartIndex = inp.text().length;
                     });
                     c.appendChild(d);
                 }
