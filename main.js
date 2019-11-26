@@ -44,14 +44,17 @@ var json3 = {
                 "concept": "新型專利",
                 "count": 4,
                 "descriptions": [
-                    "專利法於92年2月6日修正公布全文138條，就新型專利改採形式審查，對新型專利申請案僅為形式要件之審查，而不進行前案檢索及實體要件之判斷（如產業利用性、新穎性、進步性等）。惟考量僅經形式審查所取得之新型專利權，其權利內容具有不安定性及不確定性，為免新型專利權人不當權利行使，有害於第三人之技術利用及研發，特於第103條至第105條增訂「新型專利技術報告」制度，促使新型專利權人妥適行使權利，且供公眾得以判斷新型專利是否符合實體要件，而具有公眾審查之功能。準此，新型專利技術報告僅為申請人判斷該新型專利權是否合於專利實體要件之參考，以及新型專利權人行使權利之佐證，非謂專利權人於新型專利公告後即應申請新型專利技術報告始能維護其專利權(智慧財產法院100年度民專上字第53號判決)"
+                    "專利法於92年2月6日修正公布全文138條，就新型專利改採形式審查，對新型專利申請案僅為形式要件之審查，而不進行前案檢索及實體要件之判斷（如產業利用性、新穎性、進步性等）。惟考量僅經形式審查所取得之新型專利權，其權利內容具有不安定性及不確定性，為免新型專利權人不當權利行使，有害於第三人之技術利用及研發，特於第103條至第105條增訂「新型專利技術報告」制度，促使新型專利權人妥適行使權利，且供公眾得以判斷新型專利是否符合實體要件，而具有公眾審查之功能。準此，新型專利技術報告僅為申請人判斷該新型專利權是否合於專利實體要件之參考，以及新型專利權人行使權利之佐證，非謂專利權人於新型專利公告後即應申請新型專利技術報告始能維護其專利權(智慧財產法院100年度民專上字第53號判決)",
+                    "專利法第21條發明之定義，申請專利之發明必須是利用自然界中固有之規律所產生之技術思想的創作。由該定義之意旨，專利法所指之發明必須具有技術性（technicalcharacter），即發明解決問題的手段必須是涉及技術領域的技術手段。申請專利之發明是否具有技術性，係其是否符合發明之定義的判斷標準。申請專利之發明是否符合發明之定義，應考量申請專利之發明的內容而非申請專利範圍的記載形式，據以確認該發明之整體對於先前技術的貢獻是否具有技術性；亦即考量申請專利之發明中所揭露解決問題的手段，若該手段具有技術性，則該發明符合發明之定義。"
                 ]
             },
             {
                 "concept": "新型專利標的",
                 "count": 1,
                 "descriptions": [
-                    "申請新型之標的，應屬對物品之「形狀」（指物品具有可從外觀觀察到確定之空間輪廓者）、「構造」（指物品內部或其整體之構成，實質表現上大多為各組成元件間之安排、配置及相互關係，且此構造之各組成元件並非以其本身原有之機能獨立運作者）或「裝置」（指為達到某一特定目的，將原具有單獨使用機能之多數獨立物品予以組合裝設者）之創作。至於物之製造方法、使用方法、處理方法等，及無一定空間形狀、構造的化學物質或醫藥品，甚至以美感為目的之物品形狀、花紋、色彩或其結合等創作，均非新型之標的，即不得依申請取得新型專利。(智慧財產法院101年度民專訴字第11號判決)"
+                    "申請新型之標的，應屬對物品之「形狀」（指物品具有可從外觀觀察到確定之空間輪廓者）、「構造」（指物品內部或其整體之構成，實質表現上大多為各組成元件間之安排、配置及相互關係，且此構造之各組成元件並非以其本身原有之機能獨立運作者）或「裝置」（指為達到某一特定目的，將原具有單獨使用機能之多數獨立物品予以組合裝設者）之創作。至於物之製造方法、使用方法、處理方法等，及無一定空間形狀、構造的化學物質或醫藥品，甚至以美感為目的之物品形狀、花紋、色彩或其結合等創作，均非新型之標的，即不得依申請取得新型專利。(智慧財產法院101年度民專訴字第11號判決)",
+                    "專利法第21條發明之定義，申請專利之發明必須是利用自然界中固有之規律所產生之技術思想的創作。由該定義之意旨，專利法所指之發明必須具有技術性（technicalcharacter），即發明解決問題的手段必須是涉及技術領域的技術手段。申請專利之發明是否具有技術性，係其是否符合發明之定義的判斷標準。申請專利之發明是否符合發明之定義，應考量申請專利之發明的內容而非申請專利範圍的記載形式，據以確認該發明之整體對於先前技術的貢獻是否具有技術性；亦即考量申請專利之發明中所揭露解決問題的手段，若該手段具有技術性，則該發明符合發明之定義。",
+                    "按設計專利的侵權比對，應先確定設計專利之專利權範圍，再比對、判斷確定後之專利權範圍與被控侵權對象（系爭產品）。確定設計專利之專利權範圍，係以圖式所揭露的內容為準，並得審酌說明書之文字，以正確認知圖式所呈現之「外觀」及其所應用之「物品」，合理確定其權利範圍。比對、判斷確定後之專利權範圍與被控侵權對象，須先解析被控侵權對象，其應對照系爭專利權範圍所確定之物品及外觀，認定被控侵權對象中對應之設計內容，無關之部分不得納入比對判斷。再以普通消費者選購相關商品之觀點，就系爭專利權範圍的整體內容與被控侵權對象中對應該專利之設計內容進行比對，據以判斷被控侵權對象與系爭專利是否為相同或近似物品，及是否為相同或近似之外觀。(智慧財產法院107年度民專上字第9號判決)"
                 ]
             }
         ]
@@ -118,10 +121,9 @@ $(function() {
 });
 
 function loaddata(){
-    // if(window.localStorage["data"]){
-    //     document.getElementsByClassName("ql-editor")[0].innerHTML = window.localStorage.getItem("data");
-    // }
-    document.getElementsByClassName("ql-editor")[0].innerHTML = "";
+    if(window.localStorage["data"]){
+        document.getElementsByClassName("ql-editor")[0].innerHTML = window.localStorage.getItem("data");
+    }
 }
 function savedata(){
     var inputText = document.getElementsByClassName("ql-editor")[0].innerHTML;
@@ -177,8 +179,8 @@ function autocomplete(inp, arr) {
     inp.bind("DOMSubtreeModified", function (e) {
         // 移動斷詞的結尾到最後
         // TODO: 現在如果刪除字的話會錯
-        jsonObject = getSuggestions(currentText);
-        words = parseJSON(jsonObject);
+        // jsonObject = getSuggestions(currentText);
+        // words = parseJSON(jsonObject);
         currentEndIndex = inp.text().length;
         console.log(currentStartIndex　+ "," + currentEndIndex);
         // currentText =  inp.text().slice(currentStartIndex, currentEndIndex);
@@ -195,6 +197,7 @@ function autocomplete(inp, arr) {
         closeAllLists();
         if (!val) { return false;}
         currentFocus = -1;
+        currentFocus2 = -1;
         a = document.createElement("DIV");
         a.setAttribute("id", this.id + "autocomplete-list");
         a.setAttribute("class", "autocomplete-items");
@@ -246,9 +249,9 @@ function autocomplete(inp, arr) {
                       }else if(currentFunctionIndex == 2){ 
                           // 如果是function2, 點擊後插入description內容
                           insertTextAtCursor(arr[index]['name'].substr(val.length) + "：" + arr[index]['description']);
-                      }else if(currentFunctionIndex == 3){ 
-                          // TODO: 如果是function3, 可以往右選擇
                       }
+                      // 選擇後把建議字詞清空
+                      words = [];
                       closeAllLists();
                       // 把斷詞起始位置移到最後
                       currentStartIndex = inp.text().length;
@@ -259,7 +262,7 @@ function autocomplete(inp, arr) {
         }else{
             // 等待推薦回傳，words為空
             b = document.createElement("DIV");
-            b.innerHTML = "...";
+            b.innerHTML = "<img src='ellipsis.gif' width='20px'>";
             a.appendChild(b);
         }
         
@@ -270,31 +273,48 @@ function autocomplete(inp, arr) {
             var pos = getCaretPosition();
             tip.css({
                 left: pos.x + 10,
-                top: pos.y + 10
+                top: pos.y + 20
             });
         }
         showFunctionName();
     });
     // 偵測鍵盤輸入 看是選擇列表上哪個字詞
     inp.bind('keydown', function(e) {
-        // var x = document.getElementById(this.id + "autocomplete-list");
         var x = document.getElementsByClassName("autocomplete-items-child");
-        console.log("currentFocus:"+currentFocus);
-        // if(x) x = x.childNodes;
-        // if (x) x = x.getElementsByTagName("div");
-        if (e.keyCode == 40) { // down
-            currentFocus++;
-            addActive(x);
-        } else if (e.keyCode == 38) { //up
-            currentFocus--;
-            addActive(x);
-        } else if(e.keyCode == 39){ // right
-            if ($('#autocomplete-list-2').length){
+        var isHovered = false;
 
+        if (e.keyCode == 40) { // down
+            // 如果正在第二層list上下移動
+            if (currentFunctionIndex == 3 && isHovered){
+                currentFocus2++;
+                addActive(x);
+                addActive2($('.autocomplete-items-child-2'));
+            } else {
+                currentFocus++;
+                addActive(x);
+            }
+        } else if (e.keyCode == 38) { //up
+            if (currentFunctionIndex == 3 && isHovered){
+                currentFocus2--;
+                addActive(x);
+                addActive2($('.autocomplete-items-child-2'));
+            } else {
+                currentFocus--;
+                addActive(x);
+            }
+        } else if(e.keyCode == 39){ // right
+            // if ($('#autocomplete-list-2').length){
+            if (currentFunctionIndex == 3){
+                addActive(x);
+                addActive2($('.autocomplete-items-child-2'));
+                currentFocus2 = 0;
+                isHovered = true;
             }
         } else if(e.keyCode == 37){ // left
-            if ($('#autocomplete-list-2').length){
-
+            if (currentFunctionIndex == 3){
+                $('#autocomplete-list-2').remove();
+                currentFocus2 = -1;
+                isHovered = false;
             }
         } else if (e.keyCode == 13) { // enter
         /*If the ENTER key is pressed, prevent the form from being submitted,*/
@@ -304,18 +324,19 @@ function autocomplete(inp, arr) {
                 if (x) x[currentFocus].click();
             }
         }
+        console.log("currentFocus:"+currentFocus, "focus2:" + currentFocus2 + "isHovered:" + isHovered);
     });
 
     function addActive(x) {
       /*a function to classify an item as "active":*/
-      if (!x) return false;
-      /*start by removing the "active" class on all items:*/
-      removeActive(x);
-      if (currentFocus >= x.length) currentFocus = 0;
-      if (currentFocus < 0) currentFocus = (x.length - 1);
-      
-      x[currentFocus].classList.add("autocomplete-active");
-      $('#autocomplete-list-2').remove();
+        if (!x) return false;
+        /*start by removing the "active" class on all items:*/
+        removeActive(x);
+        if (currentFocus >= x.length) currentFocus = 0;
+        if (currentFocus < 0) currentFocus = (x.length - 1);
+        
+        x[currentFocus].classList.add("autocomplete-active");
+        $('#autocomplete-list-2').remove();
         // 如果是function2，加第二層list
         if(currentFunctionIndex == 2){
             if(words['laws']){
@@ -323,12 +344,45 @@ function autocomplete(inp, arr) {
                 c.setAttribute("id", "autocomplete-list-2");
                 c.setAttribute("class", "autocomplete-items");
                 d = document.createElement("DIV");
+                d.setAttribute("class", "autocomplete-items-child-2");
                 d.innerHTML += words['laws'][currentFocus]['description'];
                 c.appendChild(d);
                 x[currentFocus].appendChild(c);
             }
+        }else if(currentFunctionIndex == 3){
+            if(words['opinions']){
+                c = document.createElement("DIV");
+                c.setAttribute("id", "autocomplete-list-2");
+                c.setAttribute("class", "autocomplete-items");
+                for ( var i = 0; i < words['opinions'][currentFocus]['descriptions'].length; i++){
+                    d = document.createElement("DIV");
+                    d.setAttribute("class", "autocomplete-items-child-2");
+                    d.innerHTML += words['opinions'][currentFocus]['descriptions'][i];
+                    d.innerHTML += "<input type='hidden' value='" + words['opinions'][currentFocus]['descriptions'][i] + "'>";
+                    d.addEventListener("click", function(e) {
+                        insertTextAtCursor(this.getElementsByTagName("input")[0].value);
+                        closeAllLists();
+                        words = [];
+                        // 把斷詞起始位置移到最後
+                        currentStartIndex = inp.text().length;
+                    });
+                    c.appendChild(d);
+                }
+                x[currentFocus].appendChild(c);
+            }
+            console.log("currentFocus2:"+currentFocus2);
+            // TODO: 可以在第二層list上下選擇
+            // x[currentFocus][currentFocus2].classList.add("autocomplete-active");
         }
         
+    }
+    function addActive2(x){
+        if (!x) return false;
+        /*start by removing the "active" class on all items:*/
+        removeActive(x);
+        if (currentFocus2 >= x.length) currentFocus2 = 0;
+        if (currentFocus2 < 0) currentFocus2 = (x.length - 1);
+        x[currentFocus2].classList.add("autocomplete-active");
     }
     function removeActive(x) {
       /*a function to remove the "active" class from all autocomplete items:*/
@@ -336,7 +390,7 @@ function autocomplete(inp, arr) {
         x[i].classList.remove("autocomplete-active");
       }
     }
-    // TODO: 保留no suggestion
+
     function closeAllLists(elmnt) {
         var x = document.getElementsByClassName("autocomplete-items");
         for (var i = 0; i < x.length; i++) {
@@ -365,7 +419,7 @@ function showFunctionName(){
     pos = getCaretPosition();
     listNode.css({
         left: pos.x + 10,
-        top: pos.y + 10
+        top: pos.y + 20
     });
     changeFunctionName();
 }

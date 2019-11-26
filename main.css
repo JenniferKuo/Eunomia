@@ -51,11 +51,12 @@ input[type=text] {
 }
 #autocomplete-list {
     z-index: 2;
+    min-width: 150px;
 }
 #autocomplete-list-2 {
     z-index: 3;
     position: absolute;
-    min-width: 200px;
+    min-width: 300px;
     left: 100%;
     top: 0;
     padding: 0;
@@ -66,7 +67,7 @@ input[type=text] {
     width: 80px;
     background: #5B4DFF;
     color: white;
-    height: 30px;
+    padding: 6px;
     text-align: center;
 }
 .autocomplete-items {
@@ -77,6 +78,12 @@ input[type=text] {
 }
 .autocomplete-items-child{
     position: relative;
+
+}
+.autocomplete-items-child-2{
+    max-height: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .autocomplete-items div {
     padding: 10px;
