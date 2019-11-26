@@ -106,7 +106,6 @@ $(function() {
             switch (String.fromCharCode(event.which).toLowerCase()) {
                 case 's':
                     event.preventDefault();
-                    alert("成功儲存檔案!");
                     savedata();
                     break;
                 // function 1
@@ -136,10 +135,17 @@ function loaddata(){
     if(window.localStorage["data"]){
         document.getElementsByClassName("ql-editor")[0].innerHTML = window.localStorage.getItem("data");
     }
+    if(window.localStorage["title"]){
+        document.getElementById("inp").value = window.localStorage.getItem("title");
+    }
 }
 function savedata(){
     var inputText = document.getElementsByClassName("ql-editor")[0].innerHTML;
+    var title = document.getElementById("inp").value;
     window.localStorage.setItem('data', inputText);
+    window.localStorage.setItem('title', title);
+    $(".save").fadeIn();
+    setTimeout(function() { $(".save").fadeOut(); }, 5000);
 }
 
 // 取得目前輸入游標位置

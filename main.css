@@ -183,3 +183,13 @@ input[type=text] {
       text-align: center; 
       outline: none;
   }
+.save {
+    font-size: small;
+    font-family: serif;
+    float: right;
+    margin: 20px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: none;  
+}
