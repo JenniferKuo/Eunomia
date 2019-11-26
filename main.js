@@ -1,8 +1,11 @@
+var API1 = "https://eb2626ba.ngrok.io/autocomplete/api/v1/term";
+var API2 = "https://eb2626ba.ngrok.io/autocomplete/api/v1/law";
+var API3 = "https://eb2626ba.ngrok.io/autocomplete/api/v1/opinion";
 var currentText = "";
 var currentStartIndex = 0;
 var currentEndIndex = 1;
 var words = [];
-var jsonObject;
+var jsonObject = [];
 var json1 = {
     "data":{
         "count": 1,
@@ -64,9 +67,6 @@ var json3 = {
 };
 // var myFocusOffset =  window.getSelection().focusOffset;
 var currentFunctionIndex = 1;
-var API1 = "http://16816d37.ngrok.io/autocomplete/api/v1/term";
-var API2 = "http://16816d37.ngrok.io/autocomplete/api/v1/law";
-var API3 = "http://16816d37.ngrok.io/autocomplete/api/v1/opinion";
 
 $(function() {
     $(document).ready(function() {
@@ -83,7 +83,20 @@ $(function() {
         // 載入儲存的文字
         // TODO: 會出現錯誤
         loaddata();
-        autocomplete($('.ql-editor'), words);
+        // autocomplete($('.ql-editor'), words);
+        $('.ql-editor').bind("DOMSubtreeModified", function (e) {
+            currentEndIndex = $('.ql-editor').text().length;
+            console.log(currentStartIndex　+ "," + currentEndIndex);
+            // currentText =  inp.text().slice(currentStartIndex, currentEndIndex);
+            if(window.getSelection().rangeCount > 0)
+                currentText = window.getSelection().focusNode.nodeValue;
+            else{
+                currentText = "";
+            }
+            console.log("currentText:" + currentText);
+            if(currentText != null)
+                getSuggestions(currentText);
+        });
     });
 
     // 偵測 Ctrl+S 儲存檔案
@@ -112,11 +125,6 @@ $(function() {
                     break;
             }
         }
-    });
-    // TODO: remove or modify
-    $('.ql-editor').bind("DOMSubtreeModified", function (e) {
-        jsonObject = getSuggestions(currentText);
-        words = parseJSON(jsonObject);
     });
 });
 
@@ -155,20 +163,25 @@ function parseJSON(jsonText){
 }
 
 function sendRequest(apiUrl, keyword){
+    var data = '{"keyword" : "' + keyword + '", "complete" : true, "limit": 5}';
+    console.log(data);
     $.ajax({
         "async": true,
         "crossDomain": true,
         url: apiUrl,
         type: 'post',
-        data: '{"keyword" : ' + keyword + ', "complete" : true, "limit": 5}',
+        "data": data,
         headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
         },
         dataType: 'json',
+        // 結果成功回傳
         success: function (result) {
             console.info(result);
-            return result;
+            words = parseJSON(result);
+            console.log(words);
+            autocomplete($('.ql-editor'), words);
         }
     });
 }
@@ -176,20 +189,10 @@ function sendRequest(apiUrl, keyword){
 function autocomplete(inp, arr) {
     var currentFocus, currentFocus2;
     // 建立一個包含所有建議字詞的list
-    inp.bind("DOMSubtreeModified", function (e) {
+    // inp.bind("DOMSubtreeModified", function (e) {
         // 移動斷詞的結尾到最後
         // TODO: 現在如果刪除字的話會錯
-        // jsonObject = getSuggestions(currentText);
-        // words = parseJSON(jsonObject);
-        currentEndIndex = inp.text().length;
-        console.log(currentStartIndex　+ "," + currentEndIndex);
-        // currentText =  inp.text().slice(currentStartIndex, currentEndIndex);
-        if(window.getSelection().rangeCount > 0)
-            currentText = window.getSelection().focusNode.nodeValue;
-        else{
-            currentText = "";
-        }
-        console.log("currentText:" + currentText);
+        
         // TODO: val應該是從上次斷掉的地方開始
         // 目前輸入的字詞
         var a, b, c, d, i, val = currentText;
@@ -199,7 +202,7 @@ function autocomplete(inp, arr) {
         currentFocus = -1;
         currentFocus2 = -1;
         a = document.createElement("DIV");
-        a.setAttribute("id", this.id + "autocomplete-list");
+        a.setAttribute("id", "autocomplete-list");
         a.setAttribute("class", "autocomplete-items");
         document.body.appendChild(a);
         f = document.createElement("DIV");
@@ -251,7 +254,7 @@ function autocomplete(inp, arr) {
                           insertTextAtCursor(arr[index]['name'].substr(val.length) + "：" + arr[index]['description']);
                       }
                       // 選擇後把建議字詞清空
-                      words = [];
+                    //   words = [];
                       closeAllLists();
                       // 把斷詞起始位置移到最後
                       currentStartIndex = inp.text().length;
@@ -276,8 +279,9 @@ function autocomplete(inp, arr) {
                 top: pos.y + 20
             });
         }
+        // 更改function名稱
         showFunctionName();
-    });
+    // });
     // 偵測鍵盤輸入 看是選擇列表上哪個字詞
     inp.bind('keydown', function(e) {
         var x = document.getElementsByClassName("autocomplete-items-child");
@@ -317,9 +321,9 @@ function autocomplete(inp, arr) {
                 isHovered = false;
             }
         } else if (e.keyCode == 13) { // enter
-        /*If the ENTER key is pressed, prevent the form from being submitted,*/
+        // TODO: 修好enter
             e.preventDefault();
-            if (currentFocus > -1) {
+            if (currentFocus > -1 && $('#autocomplete-list')) {
                 /*and simulate a click on the "active" item:*/
                 if (x) x[currentFocus].click();
             }
@@ -362,7 +366,7 @@ function autocomplete(inp, arr) {
                     d.addEventListener("click", function(e) {
                         insertTextAtCursor(this.getElementsByTagName("input")[0].value);
                         closeAllLists();
-                        words = [];
+                        // words = [];
                         // 把斷詞起始位置移到最後
                         currentStartIndex = inp.text().length;
                     });
@@ -442,8 +446,8 @@ function getSuggestions(currentText){
             result = json3;
             break;
     }
-    // return sendRequest(api, currentText);
-    return result;
+    sendRequest(api, currentText);
+    // return result;
 }
 
 function changeFunctionName(){

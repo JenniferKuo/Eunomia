@@ -21,7 +21,7 @@ html body {
 #editor {
     box-shadow: 0 1px 3px 1px rgba(60, 60, 60, 0.13);
     box-sizing: border-box;
-    margin: 200px auto;
+    margin: 100px auto;
     max-width: 740px;
     background-color: white;
     padding: 56px 50px;
