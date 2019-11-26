@@ -1,30 +1,85 @@
 var currentText = "";
 var currentStartIndex = 0;
 var currentEndIndex = 1;
-var words, words2 = [];
-var myFocusOffset =  window.getSelection().focusOffset;
+var words = [];
+var jsonObject;
+var json1 = {
+    "data":{
+        "count": 1,
+        "isFound": true,
+        "keyword": "法",
+        "terms": ["法律"]
+    },
+    "message": "Success",
+    "errorCode": "000"
+};
+
+var json2 = {
+    "data":{
+        "count": 5,
+        "isFound": true,
+        "keyword": "勞動",
+        "laws": [
+            {
+                "description": "雇主不得以強暴、脅迫、拘禁或其他非法之方法，強制勞工從事勞動。",
+                "name": "勞動基準法第5條"
+            },
+            {
+                "description": "任何人不得介入他人之勞動契約，抽取不法利益。",
+                "name": "勞動基準法第6條"
+            },
+        ]
+    },
+    "message": "Success",
+    "errorCode": "000"
+};
+
+var json3 = {
+    "data":{
+        "count": 3,
+        "isFound": true,
+        "keyword": "新型",
+        "opinions": [
+            {
+                "concept": "新型專利",
+                "count": 4,
+                "descriptions": [
+                    "專利法於92年2月6日修正公布全文138條，就新型專利改採形式審查，對新型專利申請案僅為形式要件之審查，而不進行前案檢索及實體要件之判斷（如產業利用性、新穎性、進步性等）。惟考量僅經形式審查所取得之新型專利權，其權利內容具有不安定性及不確定性，為免新型專利權人不當權利行使，有害於第三人之技術利用及研發，特於第103條至第105條增訂「新型專利技術報告」制度，促使新型專利權人妥適行使權利，且供公眾得以判斷新型專利是否符合實體要件，而具有公眾審查之功能。準此，新型專利技術報告僅為申請人判斷該新型專利權是否合於專利實體要件之參考，以及新型專利權人行使權利之佐證，非謂專利權人於新型專利公告後即應申請新型專利技術報告始能維護其專利權(智慧財產法院100年度民專上字第53號判決)"
+                ]
+            },
+            {
+                "concept": "新型專利標的",
+                "count": 1,
+                "descriptions": [
+                    "申請新型之標的，應屬對物品之「形狀」（指物品具有可從外觀觀察到確定之空間輪廓者）、「構造」（指物品內部或其整體之構成，實質表現上大多為各組成元件間之安排、配置及相互關係，且此構造之各組成元件並非以其本身原有之機能獨立運作者）或「裝置」（指為達到某一特定目的，將原具有單獨使用機能之多數獨立物品予以組合裝設者）之創作。至於物之製造方法、使用方法、處理方法等，及無一定空間形狀、構造的化學物質或醫藥品，甚至以美感為目的之物品形狀、花紋、色彩或其結合等創作，均非新型之標的，即不得依申請取得新型專利。(智慧財產法院101年度民專訴字第11號判決)"
+                ]
+            }
+        ]
+    },
+    "message": "Success",
+    "errorCode": "000"
+};
+// var myFocusOffset =  window.getSelection().focusOffset;
 var currentFunctionIndex = 1;
-var API1 = "";
-var API2 = "";
-var API3 = "";
+var API1 = "http://16816d37.ngrok.io/autocomplete/api/v1/term";
+var API2 = "http://16816d37.ngrok.io/autocomplete/api/v1/law";
+var API3 = "http://16816d37.ngrok.io/autocomplete/api/v1/opinion";
 
 $(function() {
     $(document).ready(function() {
         var quill = new Quill('#editor', {
             theme: 'snow'
-          });
-        // 載入儲存的文字
+        });
+        
         changeCSS();
-        // disable all quill hotkeys
         // TODO: 取消所有hotkey
-        var keyboard = quill.keyboard;
-        for (var key in keyboard.hotkeys) {
-            delete keyboard.hotkeys[key];
-        }
-        // // TODO: 會出現錯誤
+        // var keyboard = quill.keyboard;
+        // for (var key in keyboard.hotkeys) {
+        //     delete keyboard.hotkeys[key];
+        // }
+        // 載入儲存的文字
+        // TODO: 會出現錯誤
         loaddata();
-        words = ["勞動基準法第5條","勞動基準法第6條"];
-        words2 = ["雇主不得以強暴、脅迫、拘禁或其他非法之方法，強制勞工從事勞動。","任何人不得介入他人之勞動契約，抽取不法利益。"];
         autocomplete($('.ql-editor'), words);
     });
 
@@ -55,8 +110,10 @@ $(function() {
             }
         }
     });
+    // TODO: remove or modify
     $('.ql-editor').bind("DOMSubtreeModified", function (e) {
-        words = getSuggestions(currentText);
+        jsonObject = getSuggestions(currentText);
+        words = parseJSON(jsonObject);
     });
 });
 
@@ -88,40 +145,56 @@ function getTextPosition() {
 }
 
 function parseJSON(jsonText){ 
-    words = JSON.parse(jsonText);
+    if(jsonText['data']['isFound'] == true){
+        return jsonText['data'];
+    }else{
+        return [];
+    }
+}
+
+function sendRequest(apiUrl, keyword){
+    $.ajax({
+        "async": true,
+        "crossDomain": true,
+        url: apiUrl,
+        type: 'post',
+        data: '{"keyword" : ' + keyword + ', "complete" : true, "limit": 5}',
+        headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        },
+        dataType: 'json',
+        success: function (result) {
+            console.info(result);
+            return result;
+        }
+    });
 }
 
 function autocomplete(inp, arr) {
-    // arr 是建議字詞列表
-    var currentFocus;
-    function setupList(){
-        switch(currentFunctionIndex){
-            case 1: 
-                break;
-            case 2: 
-                break;
-            case 3: 
-                break;
-        }
-    }
+    var currentFocus, currentFocus2;
     // 建立一個包含所有建議字詞的list
     inp.bind("DOMSubtreeModified", function (e) {
         // 移動斷詞的結尾到最後
         // TODO: 現在如果刪除字的話會錯
+        jsonObject = getSuggestions(currentText);
+        words = parseJSON(jsonObject);
         currentEndIndex = inp.text().length;
-        // console.log(currentStartIndex　+ "," + currentEndIndex);
-        currentText =  inp.text().slice(currentStartIndex, currentEndIndex);
-        arr = words;
+        console.log(currentStartIndex　+ "," + currentEndIndex);
+        // currentText =  inp.text().slice(currentStartIndex, currentEndIndex);
+        if(window.getSelection().rangeCount > 0)
+            currentText = window.getSelection().focusNode.nodeValue;
+        else{
+            currentText = "";
+        }
+        console.log("currentText:" + currentText);
         // TODO: val應該是從上次斷掉的地方開始
+        // 目前輸入的字詞
         var a, b, c, d, i, val = currentText;
-        // var a, b, i, val = currentText;
-        // console.log(val);
         /*close any already open lists of autocompleted values*/
         closeAllLists();
         if (!val) { return false;}
-        currentFocus = 0;
-        /*create a DIV element that will contain the items (values):*/
-        // a = document.getElementById("autocomplete-list");
+        currentFocus = -1;
         a = document.createElement("DIV");
         a.setAttribute("id", this.id + "autocomplete-list");
         a.setAttribute("class", "autocomplete-items");
@@ -130,29 +203,66 @@ function autocomplete(inp, arr) {
         f.setAttribute("id", "function-info");
         a.appendChild(f);
 
-        for (i = 0; i < arr.length; i++) {
-          /*check if the item starts with the same letters as the text field value:*/
-          // TODO: 斷詞處理
-          // val的值為斷詞
-          if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
-            /*create a DIV element for each matching element:*/
+        console.log("words:" + words);
+        // 如果回傳回來的詞不為空
+        if(Object.keys(words).length > 0){
+            // TODO: 根據function設定不同的arr
+            if(currentFunctionIndex == 1){
+                arr = words['terms'];
+            }else if(currentFunctionIndex == 2){
+                arr = words['laws'];
+            }else if(currentFunctionIndex == 3){
+                arr = words['opinions'];
+            }        
+
+            console.log("arr:" + arr);
+            
+            for (i = 0; i < arr.length; i++) {
+                // TODO: 斷詞處理
+                // val的值為斷詞
+                // TODO: 根據function改變arr的值
+                var item;
+                if(currentFunctionIndex == 1){
+                    item = arr[i];
+                }else if(currentFunctionIndex == 2){
+                    item = arr[i]['name']
+                }else if(currentFunctionIndex == 3){
+                    item = arr[i]['concept']
+                }
+                if (item.substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                  b = document.createElement("DIV");
+                  b.setAttribute("class", "autocomplete-items-child");
+                  b.innerHTML = "<strong>" + item.substr(0, val.length) + "</strong>";
+                  b.innerHTML += item.substr(val.length);
+                  // b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                  b.innerHTML += "<input type='hidden' value='" + i + "'>";
+                  b.addEventListener("click", function(e) {
+                      // TODO: 修正插入位置
+                      var index = this.getElementsByTagName("input")[0].value;
+                      if(currentFunctionIndex == 1){
+                          // 如果是function1，插入按鈕本身的內容
+                          insertTextAtCursor(arr[index].substr(val.length));
+                          console.log(arr[index].substr(val.length));
+                      }else if(currentFunctionIndex == 2){ 
+                          // 如果是function2, 點擊後插入description內容
+                          insertTextAtCursor(arr[index]['name'].substr(val.length) + "：" + arr[index]['description']);
+                      }else if(currentFunctionIndex == 3){ 
+                          // TODO: 如果是function3, 可以往右選擇
+                      }
+                      closeAllLists();
+                      // 把斷詞起始位置移到最後
+                      currentStartIndex = inp.text().length;
+                  });
+                  a.appendChild(b);
+                }
+            }
+        }else{
+            // 等待推薦回傳，words為空
             b = document.createElement("DIV");
-            /*make the matching letters bold:*/
-            b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
-            b.innerHTML += arr[i].substr(val.length);
-            /*insert a input field that will hold the current array item's value:*/
-            b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
-            /*execute a function when someone clicks on the item value (DIV element):*/
-            b.addEventListener("click", function(e) {
-                // TODO: 修正插入位置
-                insertTextAtCursor(this.getElementsByTagName("input")[0].value.substr(val.length));
-                closeAllLists();
-                // 把斷詞起始位置移到最後
-                currentStartIndex = inp.text().length;
-            });
+            b.innerHTML = "...";
             a.appendChild(b);
-          }
         }
+        
 
         // 取得游標所在位置 把popup擺放到游標旁邊
         if( $('.autocomplete-items').length ){
@@ -167,11 +277,11 @@ function autocomplete(inp, arr) {
     });
     // 偵測鍵盤輸入 看是選擇列表上哪個字詞
     inp.bind('keydown', function(e) {
-        var x = document.getElementById(this.id + "autocomplete-list");
-        if(x) x = x.childNodes;
+        // var x = document.getElementById(this.id + "autocomplete-list");
+        var x = document.getElementsByClassName("autocomplete-items-child");
+        console.log("currentFocus:"+currentFocus);
+        // if(x) x = x.childNodes;
         // if (x) x = x.getElementsByTagName("div");
-        // var x = document.getElementsByClassName("autocomplete-items");
-        console.log(x.length);
         if (e.keyCode == 40) { // down
             currentFocus++;
             addActive(x);
@@ -203,29 +313,22 @@ function autocomplete(inp, arr) {
       removeActive(x);
       if (currentFocus >= x.length) currentFocus = 0;
       if (currentFocus < 0) currentFocus = (x.length - 1);
-      /*add class "autocomplete-active":*/
+      
       x[currentFocus].classList.add("autocomplete-active");
-        // 如果list有兩層，並且目前第二層list不存在
-        if(words2.length > 0 && $('#autocomplete-list-2').length < 1){
-            c = document.createElement("DIV");
-            c.setAttribute("id", "autocomplete-list-2");
-            c.setAttribute("class", "autocomplete-items");
-            for (i = 0; i < words2.length; i++) {
-                  d = document.createElement("DIV");
-                  d.innerHTML += words2[i];
-                  d.innerHTML += "<input type='hidden' value='" + words2[i] + "'>";
-                  d.addEventListener("click", function(e) {
-                      // TODO: 修正插入位置
-                      insertTextAtCursor(this.getElementsByTagName("input")[0].value);
-                      closeAllLists();
-                      // 把斷詞起始位置移到最後
-                      currentStartIndex = inp.text().length;
-                  });
-                  c.appendChild(d);
-                
-              }
-            x[currentFocus].appendChild(c);
+      $('#autocomplete-list-2').remove();
+        // 如果是function2，加第二層list
+        if(currentFunctionIndex == 2){
+            if(words['laws']){
+                c = document.createElement("DIV");
+                c.setAttribute("id", "autocomplete-list-2");
+                c.setAttribute("class", "autocomplete-items");
+                d = document.createElement("DIV");
+                d.innerHTML += words['laws'][currentFocus]['description'];
+                c.appendChild(d);
+                x[currentFocus].appendChild(c);
+            }
         }
+        
     }
     function removeActive(x) {
       /*a function to remove the "active" class from all autocomplete items:*/
@@ -235,7 +338,6 @@ function autocomplete(inp, arr) {
     }
     // TODO: 保留no suggestion
     function closeAllLists(elmnt) {
-        console.log("closeAllList");
         var x = document.getElementsByClassName("autocomplete-items");
         for (var i = 0; i < x.length; i++) {
             if (elmnt != x[i] && elmnt != inp) {
@@ -269,15 +371,24 @@ function showFunctionName(){
 }
 
 function getSuggestions(currentText){
-    switch(currentFuncionIndex){
+    // TODO: implement
+    var api, result;
+    switch(currentFunctionIndex){
         case 1:
+            api = API1;
+            result = json1;
             break;
         case 2:
+            api = API2;
+            result = json2;
             break;
         case 3:
+            api = API3;
+            result = json3;
             break;
     }
-    return words;
+    // return sendRequest(api, currentText);
+    return result;
 }
 
 function changeFunctionName(){
@@ -294,7 +405,6 @@ function changeFunctionName(){
             break;
     }
     document.getElementById("function-info").innerHTML = name;
-    console.log(name);
 }
 
     // 在游標之後插入文字
@@ -303,9 +413,6 @@ function changeFunctionName(){
         if (window.getSelection) {
             sel = window.getSelection();
             // window.getSelection().focusNode.nodeValue = text;
-            // window.getSelection().focusNode.innerHTML = text;
-            // console.log(window.getSelection().focusNode.nodeValue);
-            // window.getSelection().focusNode.insertNode( document.createTextNode(text));
             if (sel.getRangeAt && sel.rangeCount) {
                 range = sel.getRangeAt(0);
                 range.deleteContents();

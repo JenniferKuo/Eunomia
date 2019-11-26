@@ -75,6 +75,9 @@ input[type=text] {
     font-size: 0.8rem;
     text-align: left;
 }
+.autocomplete-items-child{
+    position: relative;
+}
 .autocomplete-items div {
     padding: 10px;
     cursor: pointer;
