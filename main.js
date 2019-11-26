@@ -70,7 +70,13 @@ var currentFunctionIndex = 1;
 
 $(function() {
     $(document).ready(function() {
+        var toolbarOptions = [['bold', 'italic', 'underline', 'strike'],[{ 'list': 'ordered'}, { 'list': 'bullet' }],[{ 'color': [] }, { 'background': [] }],  [{ 'font': [] }],
+        [{ 'align': [] }],['clean']  ];
         var quill = new Quill('#editor', {
+            modules: {
+                // Equivalent to { toolbar: { container: '#toolbar' }}
+                toolbar: toolbarOptions
+              },
             theme: 'snow'
         });
         
