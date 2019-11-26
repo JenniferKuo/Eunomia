@@ -398,6 +398,7 @@ function autocomplete(inp, arr) {
                 x[i].parentNode.removeChild(x[i]);
             }        
         }
+        // $('#autocomplete-list').remove();
     }
     /*execute a function when someone clicks in the document:*/
     document.addEventListener("click", function (e) {
