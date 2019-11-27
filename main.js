@@ -270,7 +270,6 @@ function autocomplete(inp, arr) {
                 // b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
                 b.innerHTML += "<input type='hidden' value='" + i + "'>";
                 b.addEventListener("click", function(e) {
-                    // TODO: 修正插入位置
                     var index = this.getElementsByTagName("input")[0].value;
                     if(currentFunctionIndex == 1){
                         // 如果是function1，插入按鈕本身的內容
@@ -289,7 +288,6 @@ function autocomplete(inp, arr) {
         }
     }else{
         // 等待推薦回傳，words為空
-        // TODO: 沒有結果顯示出來 等待中再用圖片表示
         b = document.createElement("DIV");
         b.innerHTML = "沒有建議的字詞";
         b.setAttribute("class", "autocomplete-items-child");
@@ -547,14 +545,15 @@ function changeFunctionName(){
         if(sel.rangeCount) {
             var range = sel.getRangeAt(0).cloneRange();
             if(range.getClientRects()) {
-            range.collapse(true);
-            var rect = range.getClientRects()[0];
-            if(rect) {
-                y = rect.top;
-                x = rect.left;
-            }
+                range.collapse(true);
+                var rect = range.getClientRects()[0];
+                if(rect) {
+                    y = rect.top + window.scrollY;;
+                    x = rect.left + window.scrollX;
+                }
             }
         }
+        console.log("x:" + x + "y:" + y);
         return {
             x: x,
             y: y
