@@ -262,29 +262,48 @@ function autocomplete(inp, arr) {
             }else if(currentFunctionIndex == 3){
                 item = arr[i]['concept']
             }
-            if (item.substr(0, val.length).toUpperCase() == val.toUpperCase()) {
-                b = document.createElement("DIV");
-                b.setAttribute("class", "autocomplete-items-child");
-                b.innerHTML = "<strong>" + item.substr(0, val.length) + "</strong>";
-                b.innerHTML += item.substr(val.length);
-                // b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
-                b.innerHTML += "<input type='hidden' value='" + i + "'>";
-                b.addEventListener("click", function(e) {
-                    var index = this.getElementsByTagName("input")[0].value;
-                    if(currentFunctionIndex == 1){
-                        // 如果是function1，插入按鈕本身的內容
-                        insertTextAtCursor(arr[index].substr(val.length));
-                        console.log(arr[index].substr(val.length));
-                        words = [];
-                    }else if(currentFunctionIndex == 2){ 
-                        // 如果是function2, 點擊後插入description內容
-                        insertTextAtCursor(arr[index]['name'].substr(val.length) + "：" + arr[index]['description']);
-                        words = [];
-                    }
-                    closeAllLists();
-                });
-                a.append(b);
+            // 如果目前是第一或第二種功能
+            if (currentFunctionIndex != 3){
+                if (item.substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                    b = document.createElement("DIV");
+                    b.setAttribute("class", "autocomplete-items-child");
+                    b.innerHTML = "<strong>" + item.substr(0, val.length) + "</strong>";
+                    b.innerHTML += item.substr(val.length);
+                    // b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                    b.innerHTML += "<input type='hidden' value='" + i + "'>";
+                    b.addEventListener("click", function(e) {
+                        var index = this.getElementsByTagName("input")[0].value;
+                        if(currentFunctionIndex == 1){
+                            // 如果是function1，插入按鈕本身的內容
+                            insertTextAtCursor(arr[index].substr(val.length));
+                            words = [];
+                        }else if(currentFunctionIndex == 2){ 
+                            // 如果是function2, 點擊後插入description內容
+                            insertTextAtCursor(arr[index]['name'].substr(val.length) + "：" + arr[index]['description']);
+                            words = [];
+                        }
+                        closeAllLists();
+                    });
+                    a.append(b);
+                }
+            } 
+            // 如果是第三種功能
+            else {
+                // 如果回傳資料有包含目前的keyword
+                if (item.toUpperCase().includes(val.toUpperCase())) {
+                    b = document.createElement("DIV");
+                    b.setAttribute("class", "autocomplete-items-child");
+                    b.innerHTML = item.substr(0, item.indexOf(val));
+                    b.innerHTML += "<strong>" + item.substr(item.indexOf(val), item.indexOf(val) + val.length) + "</strong>";
+                    b.innerHTML += item.substr(item.indexOf(val) + val.length);
+                    b.innerHTML += "<input type='hidden' value='" + i + "'>";
+                    b.addEventListener("click", function(e) {
+                        // closeAllLists();
+                    });
+                    a.append(b);
+                }
             }
+            
         }
     }else{
         // 等待推薦回傳，words為空
@@ -349,7 +368,6 @@ function autocomplete(inp, arr) {
         // TODO: 修好enter
             if (Object.keys(words).length > 0){
                 e.preventDefault();
-                backspace();
                 // 防止enter換行
                 // document.getElementsByClassName('ql-editor')[0].contentEditable = false;
                 if (currentFocus > -1 && $('#autocomplete-list')) {
@@ -360,39 +378,39 @@ function autocomplete(inp, arr) {
         // console.log("currentFocus: "+currentFocus, ", focus2:" + currentFocus2 + ", isHovered:" + isHovered);
     });
 
-    function backspace(){
-        var el = $('.ql-editor')[0],
-            myval   = 1,
-            cur_pos = 0;
+    // function backspace(){
+    //     var el = $('.ql-editor')[0],
+    //         myval   = 1,
+    //         cur_pos = 0;
         
-        if (el.selectionStart) { 
-            cur_pos = el.selectionStart; 
+    //     if (el.selectionStart) { 
+    //         cur_pos = el.selectionStart; 
             
-        } else if (document.selection) { 
-            el.focus(); 
-            var r = document.selection.createRange(); 
-            if (r != null) {
-                var re = el.createTextRange(), 
-                    rc = re.duplicate(); 
-                re.moveToBookmark(r.getBookmark()); 
-                rc.setEndPoint('EndToStart', re); 
+    //     } else if (document.selection) { 
+    //         el.focus(); 
+    //         var r = document.selection.createRange(); 
+    //         if (r != null) {
+    //             var re = el.createTextRange(), 
+    //                 rc = re.duplicate(); 
+    //             re.moveToBookmark(r.getBookmark()); 
+    //             rc.setEndPoint('EndToStart', re); 
             
-                cur_pos = rc.text.length; 
-            }
-        }  
-        console.log("cur_pos: " + cur_pos);
-        if (el.setSelectionRange) {
-            el.focus();
-            el.setSelectionRange(cur_pos - myval, cur_pos - myval);
-        }
-        else if (el.createTextRange) {
-            var range = el.createTextRange();
-            range.collapse(true);
-            range.moveEnd('character', cur_pos - myval);
-            range.moveStart('character', cur_pos - myval);
-            range.select();
-        }
-    }
+    //             cur_pos = rc.text.length; 
+    //         }
+    //     }  
+    //     if (el.setSelectionRange) {
+    //         el.focus();
+    //         el.setSelectionRange(cur_pos - myval, cur_pos - myval);
+    //     }
+    //     else if (el.createTextRange) {
+    //         var range = el.createTextRange();
+    //         range.collapse(true);
+    //         range.moveEnd('character', cur_pos - myval);
+    //         range.moveStart('character', cur_pos - myval);
+    //         range.select();
+    //     }
+    // }
+
     function addActive(x) {
       /*a function to classify an item as "active":*/
         if (!x) return false;
@@ -434,7 +452,6 @@ function autocomplete(inp, arr) {
                 }
                 x[currentFocus].appendChild(c);
             }
-            console.log("currentFocus2:"+currentFocus2);
             // TODO: 可以在第二層list上下選擇
             // x[currentFocus][currentFocus2].classList.add("autocomplete-active");
         }
@@ -474,7 +491,6 @@ function showFunctionName(){
     if(document.getElementById('switch').checked){
         var listNode, pos;
         if(!$('#autocomplete-list')){
-            console.log("create function info");
             listNode = document.createElement("DIV");
             listNode.setAttribute("id", "autocomplete-list");
             listNode.setAttribute("class", "autocomplete-items");
@@ -553,7 +569,6 @@ function changeFunctionName(){
                 }
             }
         }
-        console.log("x:" + x + "y:" + y);
         return {
             x: x,
             y: y
