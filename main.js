@@ -74,8 +74,12 @@ $(function() {
         [{ 'align': [] }],['clean']  ];
         var quill = new Quill('#editor', {
             modules: {
-                // Equivalent to { toolbar: { container: '#toolbar' }}
-                toolbar: toolbarOptions
+                toolbar: toolbarOptions,
+                history: {
+                    delay: 2000,
+                    maxStack: 500,
+                    userOnly: true
+                }
               },
             theme: 'snow'
         });
