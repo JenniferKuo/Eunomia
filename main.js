@@ -3,7 +3,9 @@ var API2 = "http://35.206.230.3:47000/autocomplete/api/v1/law";
 var API3 = "http://35.206.230.3:47000/autocomplete/api/v1/opinion";
 var textLength = 0;
 var quill;
+var tempText = "";
 var currentText = "";
+var charIndex = 0;
 var currentStartIndex = 0;
 var words = [];
 var jsonObject = [];
@@ -95,10 +97,21 @@ $(function() {
                 showLoading();
                 // currentStartIndex = getTextPosition();
                 if(window.getSelection().focusNode.nodeValue !=null){
+                    // 抓到目前游標正在打的最後一個單詞
                     var textList = window.getSelection().focusNode.nodeValue.split(" ");
-                    currentText = textList[textList.length - 1];
-                    if (currentText != "")
-                        getSuggestions(currentText);
+                    tempText = textList[textList.length - 1];
+                    if (Object.keys(words).length < 1){
+                        charIndex = tempText.length - 1;
+                        currentText = tempText.slice(charIndex);
+                        if (currentText != "")
+                            getSuggestions(currentText);
+                    }else{
+                        currentText = tempText.slice(charIndex);
+                        autocomplete($('.ql-editor'), words);
+                    }
+                    if (currentText.length < 1){
+                        words = [];
+                    }
                 }
                 console.log("currentText:" + currentText);
                 textLength = $('.ql-editor').text().length;
@@ -113,24 +126,28 @@ $(function() {
                 case 's':
                     event.preventDefault();
                     savedata();
+                    words = [];
                     break;
                 // function 1
                 case 'j':    
                     event.preventDefault();
                     currentFunctionIndex = 1;
                     showFunctionName();
+                    words = [];
                     break;
                 // function 2
                 case 'k':
                     event.preventDefault();
                     currentFunctionIndex = 2;
                     showFunctionName();
+                    words = [];
                     break;
                 // function 3
                 case 'l':
                     event.preventDefault();
                     currentFunctionIndex = 3;
                     showFunctionName();
+                    words = [];
                     break;
             }
         }
@@ -219,15 +236,13 @@ function autocomplete(inp, arr) {
     // 建立一個包含所有建議字詞的list
     // 目前輸入的字詞
     var a, b, c, d, i, val = currentText;
-    /*close any already open lists of autocompleted values*/
-    // closeAllLists();
     if (!val) { return false;}
     currentStartIndex = getTextPosition();
     currentFocus = -1;
     currentFocus2 = -1;
     a = $('#autocomplete-list');
     $('.autocomplete-items-child').remove();
-    console.log("words:" + words);
+    console.log(words);
     // 如果回傳回來的詞不為空
     if(Object.keys(words).length > 0){
         if(currentFunctionIndex == 1){
@@ -238,7 +253,7 @@ function autocomplete(inp, arr) {
             arr = words['opinions'];
         }        
 
-        console.log("arr:" + arr);
+        console.log(arr);
         for (i = 0; i < arr.length; i++) {
             var item;
             if(currentFunctionIndex == 1){
@@ -247,6 +262,7 @@ function autocomplete(inp, arr) {
                 item = arr[i]['name']
             }else if(currentFunctionIndex == 3){
                 item = arr[i]['concept']
+                console.log(item);
             }
             if (item.substr(0, val.length).toUpperCase() == val.toUpperCase()) {
                 b = document.createElement("DIV");
@@ -262,9 +278,11 @@ function autocomplete(inp, arr) {
                         // 如果是function1，插入按鈕本身的內容
                         insertTextAtCursor(arr[index].substr(val.length));
                         console.log(arr[index].substr(val.length));
+                        words = [];
                     }else if(currentFunctionIndex == 2){ 
                         // 如果是function2, 點擊後插入description內容
                         insertTextAtCursor(arr[index]['name'].substr(val.length) + "：" + arr[index]['description']);
+                        words = [];
                     }
                     closeAllLists();
                 });
@@ -343,7 +361,7 @@ function autocomplete(inp, arr) {
                 }
             }
         }
-        console.log("currentFocus: "+currentFocus, ", focus2:" + currentFocus2 + ", isHovered:" + isHovered);
+        // console.log("currentFocus: "+currentFocus, ", focus2:" + currentFocus2 + ", isHovered:" + isHovered);
     });
 
     function backspace(){
@@ -413,6 +431,7 @@ function autocomplete(inp, arr) {
                     d.innerHTML += "<input type='hidden' value='" + words['opinions'][currentFocus]['descriptions'][i] + "'>";
                     d.addEventListener("click", function(e) {
                         insertTextAtCursor(this.getElementsByTagName("input")[0].value);
+                        words = [];
                         closeAllLists();
                     });
                     c.appendChild(d);
