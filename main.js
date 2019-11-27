@@ -102,16 +102,12 @@ $(function() {
                     tempText = textList[textList.length - 1];
                     if (Object.keys(words).length < 1){
                         charIndex = tempText.length - 1;
-                        currentText = tempText.slice(charIndex);
-                        if (currentText != "")
-                            getSuggestions(currentText);
-                    }else{
-                        currentText = tempText.slice(charIndex);
-                        autocomplete($('.ql-editor'), words);
                     }
-                    if (currentText.length < 1){
+                    currentText = tempText.slice(charIndex);
+                    if (currentText != "" && !isZhuYin(currentText))
+                        getSuggestions(currentText);
+                    if (currentText == "")
                         words = [];
-                    }
                 }
                 console.log("currentText:" + currentText);
                 textLength = $('.ql-editor').text().length;
@@ -171,12 +167,16 @@ function savedata(){
     setTimeout(function() { $(".save").fadeOut(); }, 5000);
 }
 
+// 判斷字串是否包含注音
+function isZhuYin(string) {
+    return (/[\u3105-\u3129\u02CA\u02C7\u02CB\u02D9]/).test(string);
+}
+
 // 取得目前輸入游標位置
 function getTextPosition() {
     var range = quill.getSelection();
     if (range) {
         if (range.length == 0) {
-            console.log('User cursor is at index', range.index);
             return range.index;
         }
     }
@@ -193,6 +193,7 @@ function parseJSON(jsonText){
 
 function sendRequest(apiUrl, keyword){
     var data = '{"keyword" : "' + keyword + '", "complete" : true, "limit": 5}';
+    console.log("send data:");
     console.log(data);
     $.ajax({
         "async": true,
@@ -207,9 +208,7 @@ function sendRequest(apiUrl, keyword){
         dataType: 'json',
         // 結果成功回傳
         success: function (result) {
-            console.info(result);
             words = parseJSON(result);
-            console.log(words);
             autocomplete($('.ql-editor'), words);
         }
     });
@@ -242,7 +241,7 @@ function autocomplete(inp, arr) {
     currentFocus2 = -1;
     a = $('#autocomplete-list');
     $('.autocomplete-items-child').remove();
-    console.log(words);
+
     // 如果回傳回來的詞不為空
     if(Object.keys(words).length > 0){
         if(currentFunctionIndex == 1){
@@ -252,7 +251,7 @@ function autocomplete(inp, arr) {
         }else if(currentFunctionIndex == 3){
             arr = words['opinions'];
         }        
-
+        console.log("arr: ");
         console.log(arr);
         for (i = 0; i < arr.length; i++) {
             var item;
@@ -262,7 +261,6 @@ function autocomplete(inp, arr) {
                 item = arr[i]['name']
             }else if(currentFunctionIndex == 3){
                 item = arr[i]['concept']
-                console.log(item);
             }
             if (item.substr(0, val.length).toUpperCase() == val.toUpperCase()) {
                 b = document.createElement("DIV");
