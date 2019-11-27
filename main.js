@@ -2,7 +2,9 @@ var API1 = "http://35.206.230.3:47000/autocomplete/api/v1/term";
 var API2 = "http://35.206.230.3:47000/autocomplete/api/v1/law";
 var API3 = "http://35.206.230.3:47000/autocomplete/api/v1/opinion";
 var textLength = 0;
+var quill;
 var currentText = "";
+var currentStartIndex = 0;
 var words = [];
 var jsonObject = [];
 var json1 = {
@@ -64,7 +66,7 @@ var json3 = {
     "message": "Success",
     "errorCode": "000"
 };
-// var myFocusOffset =  window.getSelection().focusOffset;
+var myFocusOffset =  window.getSelection().focusOffset;
 var currentFunctionIndex = 1;
 
 $(function() {
@@ -72,7 +74,7 @@ $(function() {
         var toolbarOptions = [[{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
         ,['bold', 'italic', 'underline', 'strike'],[{ 'list': 'ordered'}, { 'list': 'bullet' }],[{ 'color': [] }, { 'background': [] }],  [{ 'font': [] }],
         [{ 'align': [] }],['clean']  ];
-        var quill = new Quill('#editor', {
+        quill = new Quill('#editor', {
             modules: {
                 toolbar: toolbarOptions,
                 history: {
@@ -89,9 +91,9 @@ $(function() {
         loaddata();
         // autocomplete($('.ql-editor'), words);
         $('.ql-editor').bind("DOMSubtreeModified", function (e) {
-
             if(textLength != $('.ql-editor').text().length && document.getElementById('switch').checked){
                 showLoading();
+                // currentStartIndex = getTextPosition();
                 if(window.getSelection().focusNode.nodeValue !=null){
                     var textList = window.getSelection().focusNode.nodeValue.split(" ");
                     currentText = textList[textList.length - 1];
@@ -158,14 +160,10 @@ function getTextPosition() {
     if (range) {
         if (range.length == 0) {
             console.log('User cursor is at index', range.index);
-            var startPos = range.index;
-        } else {
-            var text = quill.getText(range.index, range.length);
-            console.log('User has highlighted: ', text);
+            return range.index;
         }
-    } else {
-        console.log('User cursor is not in editor');
     }
+    return 0;
 }
 
 function parseJSON(jsonText){ 
@@ -219,85 +217,82 @@ function showLoading(){
 function autocomplete(inp, arr) {
     var currentFocus, currentFocus2;
     // 建立一個包含所有建議字詞的list
-    // inp.bind("DOMSubtreeModified", function (e) {
-        // 移動斷詞的結尾到最後
-        // TODO: 從有空白格的開始算新的詞
-        
-        // 目前輸入的字詞
-        var a, b, c, d, i, val = currentText;
-        /*close any already open lists of autocompleted values*/
-        // closeAllLists();
-        if (!val) { return false;}
-        currentFocus = -1;
-        currentFocus2 = -1;
-        a = $('#autocomplete-list');
-        $('.autocomplete-items-child').remove();
-        console.log("words:" + words);
-        // 如果回傳回來的詞不為空
-        if(Object.keys(words).length > 0){
+    // 目前輸入的字詞
+    var a, b, c, d, i, val = currentText;
+    /*close any already open lists of autocompleted values*/
+    // closeAllLists();
+    if (!val) { return false;}
+    currentStartIndex = getTextPosition();
+    currentFocus = -1;
+    currentFocus2 = -1;
+    a = $('#autocomplete-list');
+    $('.autocomplete-items-child').remove();
+    console.log("words:" + words);
+    // 如果回傳回來的詞不為空
+    if(Object.keys(words).length > 0){
+        if(currentFunctionIndex == 1){
+            arr = words['terms'];
+        }else if(currentFunctionIndex == 2){
+            arr = words['laws'];
+        }else if(currentFunctionIndex == 3){
+            arr = words['opinions'];
+        }        
+
+        console.log("arr:" + arr);
+        for (i = 0; i < arr.length; i++) {
+            var item;
             if(currentFunctionIndex == 1){
-                arr = words['terms'];
+                item = arr[i];
             }else if(currentFunctionIndex == 2){
-                arr = words['laws'];
+                item = arr[i]['name']
             }else if(currentFunctionIndex == 3){
-                arr = words['opinions'];
-            }        
-
-            console.log("arr:" + arr);
-            for (i = 0; i < arr.length; i++) {
-                var item;
-                if(currentFunctionIndex == 1){
-                    item = arr[i];
-                }else if(currentFunctionIndex == 2){
-                    item = arr[i]['name']
-                }else if(currentFunctionIndex == 3){
-                    item = arr[i]['concept']
-                }
-                if (item.substr(0, val.length).toUpperCase() == val.toUpperCase()) {
-                  b = document.createElement("DIV");
-                  b.setAttribute("class", "autocomplete-items-child");
-                  b.innerHTML = "<strong>" + item.substr(0, val.length) + "</strong>";
-                  b.innerHTML += item.substr(val.length);
-                  // b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
-                  b.innerHTML += "<input type='hidden' value='" + i + "'>";
-                  b.addEventListener("click", function(e) {
-                      // TODO: 修正插入位置
-                      var index = this.getElementsByTagName("input")[0].value;
-                      if(currentFunctionIndex == 1){
-                          // 如果是function1，插入按鈕本身的內容
-                          insertTextAtCursor(arr[index].substr(val.length));
-                          console.log(arr[index].substr(val.length));
-                      }else if(currentFunctionIndex == 2){ 
-                          // 如果是function2, 點擊後插入description內容
-                          insertTextAtCursor(arr[index]['name'].substr(val.length) + "：" + arr[index]['description']);
-                      }
-                      closeAllLists();
-                  });
-                  a.append(b);
-                }
+                item = arr[i]['concept']
             }
-        }else{
-            // 等待推薦回傳，words為空
-            // TODO: 沒有結果顯示出來 等待中再用圖片表示
-            b = document.createElement("DIV");
-            b.innerHTML = "沒有建議的字詞";
-            b.setAttribute("class", "autocomplete-items-child");
-            a.append(b);
+            if (item.substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                b = document.createElement("DIV");
+                b.setAttribute("class", "autocomplete-items-child");
+                b.innerHTML = "<strong>" + item.substr(0, val.length) + "</strong>";
+                b.innerHTML += item.substr(val.length);
+                // b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                b.innerHTML += "<input type='hidden' value='" + i + "'>";
+                b.addEventListener("click", function(e) {
+                    // TODO: 修正插入位置
+                    var index = this.getElementsByTagName("input")[0].value;
+                    if(currentFunctionIndex == 1){
+                        // 如果是function1，插入按鈕本身的內容
+                        insertTextAtCursor(arr[index].substr(val.length));
+                        console.log(arr[index].substr(val.length));
+                    }else if(currentFunctionIndex == 2){ 
+                        // 如果是function2, 點擊後插入description內容
+                        insertTextAtCursor(arr[index]['name'].substr(val.length) + "：" + arr[index]['description']);
+                    }
+                    closeAllLists();
+                });
+                a.append(b);
+            }
         }
-        
+    }else{
+        // 等待推薦回傳，words為空
+        // TODO: 沒有結果顯示出來 等待中再用圖片表示
+        b = document.createElement("DIV");
+        b.innerHTML = "沒有建議的字詞";
+        b.setAttribute("class", "autocomplete-items-child");
+        a.append(b);
+    }
+    
 
-        // 取得游標所在位置 把popup擺放到游標旁邊
-        if( $('.autocomplete-items').length ){
-            var tip = $('.autocomplete-items');
-            var pos = getCaretPosition();
-            tip.css({
-                left: pos.x + 10,
-                top: pos.y + 20
-            });
-        }
-        // 更改function名稱
-        showFunctionName();
-    // });
+    // 取得游標所在位置 把popup擺放到游標旁邊
+    if( $('.autocomplete-items').length ){
+        var tip = $('.autocomplete-items');
+        var pos = getCaretPosition();
+        tip.css({
+            left: pos.x + 10,
+            top: pos.y + 20
+        });
+    }
+    // 更改function名稱
+    showFunctionName();
+
     // 偵測鍵盤輸入 看是選擇列表上哪個字詞
     inp.bind('keydown', function(e) {
         var x = document.getElementsByClassName("autocomplete-items-child");
@@ -525,21 +520,7 @@ function changeFunctionName(){
 
     // 在游標之後插入文字
     function insertTextAtCursor(text) {
-        var sel, range;
-        if (window.getSelection) {
-            sel = window.getSelection();
-            // window.getSelection().focusNode.nodeValue = text;
-            if (sel.getRangeAt && sel.rangeCount) {
-                range = sel.getRangeAt(0);
-                range.deleteContents();
-                var node = document.createTextNode(text);
-                range.insertNode(node);
-                // TODO: 找到目前游標位置插入文字
-                document.getElementsByClassName("ql-editor")[0].lastChild.innerHTML += text;
-            }
-        } else if (document.selection && document.selection.createRange) {
-            document.selection.createRange().text = text;
-        }
+        quill.insertText(currentStartIndex, text);
     }
 
     function getCaretPosition() {
