@@ -294,12 +294,9 @@ function autocomplete(inp, arr) {
                     b = document.createElement("DIV");
                     b.setAttribute("class", "autocomplete-items-child");
                     b.innerHTML = item.substr(0, item.indexOf(val));
-                    b.innerHTML += "<strong>" + item.substr(item.indexOf(val), item.indexOf(val) + val.length) + "</strong>";
+                    b.innerHTML += "<strong>" + item.substr(item.indexOf(val), val.length) + "</strong>";
                     b.innerHTML += item.substr(item.indexOf(val) + val.length);
                     b.innerHTML += "<input type='hidden' value='" + i + "'>";
-                    b.addEventListener("click", function(e) {
-                        // closeAllLists();
-                    });
                     a.append(b);
                 }
             }
