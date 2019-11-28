@@ -93,7 +93,7 @@ $(function() {
         loaddata();
         // autocomplete($('.ql-editor'), words);
         $('.ql-editor').bind("DOMSubtreeModified", function (e) {
-            if(textLength != $('.ql-editor').text().length && document.getElementById('switch').checked){
+            if(document.getElementById('switch').checked){
                 showLoading();
                 // currentStartIndex = getTextPosition();
                 if(window.getSelection().focusNode.nodeValue !=null){
@@ -225,7 +225,7 @@ function showLoading(){
     b.setAttribute("class", "autocomplete-items-child");
     b.innerHTML = "<img src='ellipsis.gif' width='20px'>";
     a.appendChild(b);
-    
+
     // 取得游標所在位置 把popup擺放到游標旁邊
     if( $('.autocomplete-items').length ){
         var tip = $('.autocomplete-items');
