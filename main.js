@@ -225,6 +225,16 @@ function showLoading(){
     b.setAttribute("class", "autocomplete-items-child");
     b.innerHTML = "<img src='ellipsis.gif' width='20px'>";
     a.appendChild(b);
+    
+    // 取得游標所在位置 把popup擺放到游標旁邊
+    if( $('.autocomplete-items').length ){
+        var tip = $('.autocomplete-items');
+        var pos = getCaretPosition();
+        tip.css({
+            left: pos.x + 10,
+            top: pos.y + 20
+        });
+    }
 }
 
 function autocomplete(inp, arr) {

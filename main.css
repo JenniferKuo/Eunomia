@@ -24,7 +24,7 @@ html body {
     max-width: 740px;
     background-color: white;
     padding: 56px 50px;
-    min-height: 700px;
+    min-height: 800px;
 }
 * { box-sizing: border-box; }
 body {
