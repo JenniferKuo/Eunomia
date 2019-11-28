@@ -3,11 +3,11 @@ var API2 = "http://35.206.230.3:47000/autocomplete/api/v1/law";
 var API3 = "http://35.206.230.3:47000/autocomplete/api/v1/opinion";
 var textLength = 0;
 var quill;
-var tempText = "";
 var currentText = "";
 var charIndex = 0;
 var currentStartIndex = 0;
 var words = [];
+var keyword = "";
 var jsonObject = [];
 var json1 = {
     "data":{
@@ -97,13 +97,8 @@ $(function() {
                 showLoading();
                 // currentStartIndex = getTextPosition();
                 if(window.getSelection().focusNode.nodeValue !=null){
-                    // 抓到目前游標正在打的最後一個單詞
-                    var textList = window.getSelection().focusNode.nodeValue.split(" ");
-                    tempText = textList[textList.length - 1];
-                    if (Object.keys(words).length < 1){
-                        charIndex = tempText.length - 1;
-                    }
-                    currentText = tempText.slice(charIndex);
+                    // 抓到目前游標正在打的最後一行
+                    currentText = window.getSelection().focusNode.nodeValue;
                     if (currentText != "" && !isZhuYin(currentText))
                         getSuggestions(currentText);
                     if (currentText == "")
@@ -209,6 +204,8 @@ function sendRequest(apiUrl, keyword){
         // 結果成功回傳
         success: function (result) {
             words = parseJSON(result);
+            console.log("words");
+            console.log(words);
             autocomplete($('.ql-editor'), words);
         }
     });
@@ -244,6 +241,9 @@ function autocomplete(inp, arr) {
 
     // 如果回傳回來的詞不為空
     if(Object.keys(words).length > 0){
+        keyword = words['keyword'];
+        console.log("keyword: " + keyword);
+        val = keyword;
         if(currentFunctionIndex == 1){
             arr = words['terms'];
         }else if(currentFunctionIndex == 2){
